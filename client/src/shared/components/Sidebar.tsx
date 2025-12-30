@@ -71,6 +71,22 @@ export const Sidebar = () => {
             </A>
           </li>
 
+          {/* Push Test Link - Active only on exact match */}
+          <li class="sidebar-item">
+            <A
+              end
+              href="/echoo/push-test"
+              class={
+                location.pathname === "/echoo/push-test"
+                  ? "flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-blue-50 font-medium text-blue-600 bg-blue-50"
+                  : "flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-blue-50 font-medium text-gray-600 hover:text-blue-700"
+              }
+            >
+              <span class="text-lg">🚀</span>
+              <span>Push Test</span>
+            </A>
+          </li>
+
           {/* Settings Link - Active only on exact match */}
           <li class="sidebar-item">
             <A
