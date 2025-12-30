@@ -93,7 +93,7 @@ export const RegisterPage = () => {
           <p class="text-gray-600">
             Already have an account?{" "}
             <A
-              href="/login"
+              href="/echoo/login"
               class="text-blue-600 hover:text-blue-800 font-medium"
             >
               Login here

@@ -1,4 +1,4 @@
-import { Show, Suspense } from "solid-js";
+import { Show, onMount, createSignal } from "solid-js";
 import { Router, Route, Navigate } from "@solidjs/router";
 import "./index.css";
 import { LoginPage } from "./apps/echoo/pages/LoginPage";
@@ -11,18 +11,30 @@ import { EchooLayout } from "./apps/echoo/components/EchooLayout";
 import { BlogPage } from "./apps/blog/pages/BlogPage";
 import { BlogLayout } from "./apps/blog/components/BlogLayout";
 import { HomePage } from "./pages/HomePage";
-import { authStore } from "./shared/stores/authStore";
+import { authStore, initializeAuth } from "./shared/stores/authStore";
 import { routes } from "./lib/router";
 
 const App = () => {
-  const isAuthenticated = authStore.isAuthenticated;
-  const isLoading = authStore.isLoading;
+  const [isInitializing, setIsInitializing] = createSignal(true);
 
-  if (isLoading) {
-    return (
-      <div class="flex justify-center items-center h-screen">Loading...</div>
-    );
-  }
+  onMount(async () => {
+    await initializeAuth();
+    setIsInitializing(false);
+  });
+
+  const isAuthenticated = authStore.isAuthenticated;
+  const isInitialized = authStore.isInitialized;
+
+  // if (isInitializing()) {
+  //   return (
+  //     <div class="flex justify-center items-center h-screen bg-gray-100">
+  //       <div class="text-center">
+  //         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+  //         <p class="text-gray-600">Initializing...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <Router children={routes} />
@@ -51,7 +63,12 @@ const App = () => {
     //   </Route>
 
     //   {/* Redirect to home if authenticated, otherwise to login */}
-    //   <Route path="*" component={() => !isAuthenticated ? <Navigate href="/login" /> : <Navigate href="/" />} />
+    //   <Route
+    //     path="*"
+    //     component={() =>
+    //       !isAuthenticated ? <Navigate href="/login" /> : <Navigate href="/" />
+    //     }
+    //   />
     // </Router>
   );
 };

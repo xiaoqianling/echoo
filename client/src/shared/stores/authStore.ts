@@ -11,6 +11,7 @@ interface AuthState {
   refreshToken: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isInitialized: boolean;
 }
 
 // 创建基础状态
@@ -20,54 +21,8 @@ const [authState, setAuthState] = createStore<AuthState>({
   refreshToken: null,
   isLoading: true,
   isAuthenticated: false,
+  isInitialized: false,
 });
-
-// 创建信号用于响应式更新
-export const [isInitialized, setIsInitialized] = createSignal(false);
-
-// Mock认证函数
-const useMockAuth = () => {
-  console.log("🎭 Using mock authentication");
-
-  const mockUser: User = {
-    id: "mock-user-1",
-    name: "Test User",
-    email: "test@example.com",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  const mockPayload = {
-    sub: mockUser.id,
-    name: mockUser.name,
-    email: mockUser.email,
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + 86400,
-  };
-
-  const mockAccessToken = `${btoa(
-    JSON.stringify({ alg: "HS256", typ: "JWT" })
-  )}.${btoa(JSON.stringify(mockPayload))}.mock-signature`;
-  const mockRefreshToken = `${btoa(
-    JSON.stringify({ alg: "HS256", typ: "JWT" })
-  )}.${btoa(
-    JSON.stringify({
-      ...mockPayload,
-      exp: Math.floor(Date.now() / 1000) + 604800,
-    })
-  )}.mock-signature`;
-
-  localStorage.setItem("accessToken", mockAccessToken);
-  localStorage.setItem("refreshToken", mockRefreshToken);
-
-  setAuthState({
-    user: mockUser,
-    accessToken: mockAccessToken,
-    refreshToken: mockRefreshToken,
-    isAuthenticated: true,
-    isLoading: false,
-  });
-};
 
 // 保存tokens
 const saveTokens = (accessToken: string, refreshToken: string) => {
@@ -157,54 +112,10 @@ export const checkAuth = async (): Promise<void> => {
 };
 
 // 刷新tokens
-export const refreshTokens = async (): Promise<void> => {
-  const currentRefreshToken =
-    authState.refreshToken || localStorage.getItem("refreshToken");
+export const refreshTokens = async (): Promise<void> => {};
 
-  if (!currentRefreshToken) {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    useMockAuth();
-    return;
-  }
-
-  try {
-    const tokens = await apiService.refreshToken(currentRefreshToken);
-    saveTokens(tokens.accessToken, tokens.refreshToken);
-    await checkAuth();
-  } catch (error) {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    useMockAuth();
-  }
-};
-
-// 初始化认证
-export const initializeAuth = async (): Promise<void> => {
-  console.log("Initializing auth...");
-  setAuthState({ isLoading: true });
-
-  try {
-    const accessToken = localStorage.getItem("accessToken");
-
-    if (accessToken) {
-      setAuthState({ accessToken });
-
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error("Init timeout")), 5000);
-      });
-
-      await Promise.race([checkAuth(), timeoutPromise]);
-    } else {
-      useMockAuth();
-    }
-  } catch (error) {
-    console.log("Auth initialization failed, using mock auth:", error.message);
-    useMockAuth();
-  } finally {
-    setIsInitialized(true);
-  }
-};
+// 停止自动刷新机制
+export const stopAutoRefresh = () => {};
 
 // 导出认证store
 export const authStore = {
@@ -231,7 +142,7 @@ export const authStore = {
   logout,
   checkAuth,
   refreshTokens,
-  initializeAuth,
+  stopAutoRefresh,
 };
 
 // 导出类型

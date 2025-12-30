@@ -23,44 +23,6 @@ export const [selectedMessageId, setSelectedMessageId] = createSignal<
   string | null
 >(null);
 
-// Mock数据
-const getMockMessages = (): Message[] => [
-  {
-    id: "local-mock-1",
-    title: "Welcome to Echoo",
-    desp: "This is your first mock message from Echoo auto-push system.",
-    short: "Welcome message",
-    tags: ["welcome", "info"],
-    sender: {
-      id: "mock-user-1",
-      name: "Test User",
-      email: "test@example.com",
-      createdAt: new Date(Date.now() - 3600000).toISOString(),
-      updatedAt: new Date(Date.now() - 3600000).toISOString(),
-    },
-    organization: undefined,
-    createdAt: new Date(Date.now() - 3600000).toISOString(),
-    updatedAt: new Date(Date.now() - 3600000).toISOString(),
-  },
-  {
-    id: "local-mock-2",
-    title: "Test Notification",
-    desp: "This is a test notification to verify the system is working correctly.",
-    short: "Test message",
-    tags: ["test", "notification"],
-    sender: {
-      id: "mock-user-1",
-      name: "Test User",
-      email: "test@example.com",
-      createdAt: new Date(Date.now() - 7200000).toISOString(),
-      updatedAt: new Date(Date.now() - 7200000).toISOString(),
-    },
-    organization: undefined,
-    createdAt: new Date(Date.now() - 7200000).toISOString(),
-    updatedAt: new Date(Date.now() - 7200000).toISOString(),
-  },
-];
-
 // 获取消息列表
 export const fetchMessages = async (organizationId?: string): Promise<void> => {
   setMessagesState({ isLoading: true, error: null });
@@ -77,14 +39,8 @@ export const fetchMessages = async (organizationId?: string): Promise<void> => {
       "Failed to fetch messages from API, using local mock data:",
       error
     );
-
-    // 使用本地mock数据作为 fallback
-    const mockMessages = getMockMessages();
-    setMessagesState({
-      messages: mockMessages,
-      error: null,
-      isLoading: false,
-    });
+  } finally {
+    setMessagesState({ isLoading: false });
   }
 };
 

@@ -1,7 +1,7 @@
 /* Sidebar Component Styles */
 
 /* Import variables with namespace */
-@use '../variables' as vars;
+@use "../variables" as vars;
 
 .sidebar {
   width: 16rem;
@@ -35,12 +35,13 @@
     font-weight: 500;
     color: vars.$text-secondary;
     text-decoration: none;
-    
+    margin: vars.$spacing-md 0;
+
     &:hover {
       background-color: rgba(vars.$primary-color, 0.1);
       color: vars.$primary-color;
     }
-    
+
     &.active {
       background-color: rgba(vars.$primary-color, 0.1);
       color: vars.$primary-color;

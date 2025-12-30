@@ -70,13 +70,23 @@ export class AuthService {
     refreshToken: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
-      const payload = this.jwtService.verify(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET || 'refreshSecretKey',
-      });
+      console.log('🔍 Refresh token verification attempt');
+      console.log('- Token exists:', !!refreshToken);
+      console.log('- Token length:', refreshToken ? refreshToken.length : 0);
+      console.log(
+        '- Token preview:',
+        refreshToken ? `${refreshToken.substring(0, 20)}...` : 'null',
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const payload = this.jwtService.verify(refreshToken);
+      console.log('✅ Refresh token verified successfully:', payload);
 
       const tokens = await this.generateTokens(payload.sub);
       return tokens;
     } catch (error) {
+      console.log('❌ Refresh token verification failed:', error.message);
+      console.log('- Error details:', error);
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
@@ -84,22 +94,26 @@ export class AuthService {
   async generateTokens(
     userId: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
+    console.log('🔐 Generating tokens for user:', userId);
+
     const accessToken = this.jwtService.sign(
       { sub: userId },
-      {
-        secret: process.env.JWT_SECRET || 'secretKey',
-        expiresIn: parseInt(process.env.JWT_EXPIRES_IN || '86400', 10),
-      },
+      // {
+      //   expiresIn: process.env.JWT_EXPIRES_IN || '1d',
+      // },
     );
 
     const refreshToken = this.jwtService.sign(
       { sub: userId },
-      {
-        secret: process.env.JWT_REFRESH_SECRET || 'refreshSecretKey',
-        expiresIn: parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '604800', 10),
-      },
+      // {
+      //   secret: process.env.JWT_REFRESH_SECRET || 'echoo-refresh-secret-key',
+      //   expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+      // },
     );
 
+    console.log('✅ Tokens generated successfully');
+    console.log('- Access token length:', accessToken.length);
+    console.log('- Refresh token length:', refreshToken.length);
     return { accessToken, refreshToken };
   }
 }
