@@ -44,3 +44,11 @@ export interface RegisterForm {
   password: string;
   name: string;
 }
+
+export interface SendMessageForm {
+  title: string;
+  desp?: string;
+  short?: string;
+  tags?: string[];
+  organizationId?: string;
+}

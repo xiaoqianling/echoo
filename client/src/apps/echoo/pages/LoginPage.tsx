@@ -75,7 +75,7 @@ export const LoginPage = () => {
           <p class="text-gray-600">
             Don't have an account?{" "}
             <A
-              href="/register"
+              href="/echoo/register"
               class="text-blue-600 hover:text-blue-800 font-medium"
             >
               Register here

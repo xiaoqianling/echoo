@@ -1,14 +1,8 @@
-import { Show, createEffect } from "solid-js";
-import { authStore, initializeAuth, isInitialized } from "../stores/authStore";
+import { Show } from "solid-js";
+import { authStore } from "../stores/authStore";
 import { notificationsStore } from "../stores/notificationsStore";
 
 export const Header = () => {
-  // 初始化认证状态
-  createEffect(() => {
-    if (!isInitialized()) {
-      initializeAuth();
-    }
-  });
 
   const handleLogout = async () => {
     await authStore.logout();

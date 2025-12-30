@@ -14,6 +14,7 @@ export const Sidebar = () => {
           {/* Home Link - Never active */}
           <li class="sidebar-item">
             <A
+              end
               href="/"
               class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-blue-50 font-medium text-gray-600 hover:text-blue-700"
             >
@@ -25,6 +26,7 @@ export const Sidebar = () => {
           {/* Dashboard Link - Active only on exact match */}
           <li class="sidebar-item">
             <A
+              end
               href="/echoo"
               class={
                 location.pathname === "/echoo"
@@ -40,6 +42,7 @@ export const Sidebar = () => {
           {/* Messages Link - Active only on exact match */}
           <li class="sidebar-item">
             <A
+              end
               href="/echoo/messages"
               class={
                 location.pathname === "/echoo/messages"
@@ -55,6 +58,7 @@ export const Sidebar = () => {
           {/* Test Link - Active only on exact match */}
           <li class="sidebar-item">
             <A
+              end
               href="/echoo/test"
               class={
                 location.pathname === "/echoo/test"
@@ -70,6 +74,7 @@ export const Sidebar = () => {
           {/* Settings Link - Active only on exact match */}
           <li class="sidebar-item">
             <A
+              end
               href="/echoo/settings"
               class={
                 location.pathname === "/echoo/settings"
@@ -79,6 +84,22 @@ export const Sidebar = () => {
             >
               <span class="text-lg">⚙️</span>
               <span>Settings</span>
+            </A>
+          </li>
+
+          {/* Login Link - Active only on exact match */}
+          <li class="sidebar-item">
+            <A
+              end
+              href="/echoo/login"
+              class={
+                location.pathname === "/echoo/login"
+                  ? "flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-blue-50 font-medium text-blue-600 bg-blue-50"
+                  : "flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-blue-50 font-medium text-gray-600 hover:text-blue-700"
+              }
+            >
+              <span class="text-lg">🔑</span>
+              <span>Login</span>
             </A>
           </li>
         </ul>

@@ -9,6 +9,7 @@ import { Message } from "../../../shared/types";
 export const DashboardPage = () => {
   // 组件挂载时获取消息列表
   onMount(() => {
+    console.log("🚀 ~ DashboardPage ~ onMount:");
     fetchMessages();
   });
 
@@ -88,6 +89,7 @@ export const DashboardPage = () => {
 
         {messagesStore.isLoading ? (
           <div class="flex justify-center items-center py-10">
+            {messagesStore.isLoading ? "true" : "false"}
             <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
           </div>
         ) : (
