@@ -23,7 +23,10 @@ exports.AuthModule = AuthModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User]),
             passport_1.PassportModule,
-            jwt_1.JwtModule.register({}),
+            jwt_1.JwtModule.register({
+                secret: process.env.JWT_SECRET || 'echoo-secret-key',
+                signOptions: { expiresIn: '1d' },
+            }),
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],

@@ -11,10 +11,6 @@ export const DashboardPage = () => {
   onMount(() => {
     console.log("🚀 ~ DashboardPage ~ onMount:");
     fetchMessages();
-          unsubscribe();
-        }
-      });
-    }
   });
 
   return (

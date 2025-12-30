@@ -98,17 +98,17 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(
       { sub: userId },
-      // {
-      //   expiresIn: process.env.JWT_EXPIRES_IN || '1d',
-      // },
+      {
+        expiresIn: '1d',
+      },
     );
 
     const refreshToken = this.jwtService.sign(
       { sub: userId },
-      // {
-      //   secret: process.env.JWT_REFRESH_SECRET || 'echoo-refresh-secret-key',
-      //   expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-      // },
+      {
+        secret: process.env.JWT_REFRESH_SECRET || 'echoo-refresh-secret-key',
+        expiresIn: '7d',
+      },
     );
 
     console.log('✅ Tokens generated successfully');

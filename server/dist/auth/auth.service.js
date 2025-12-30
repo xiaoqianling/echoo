@@ -110,8 +110,13 @@ let AuthService = class AuthService {
     }
     async generateTokens(userId) {
         console.log('🔐 Generating tokens for user:', userId);
-        const accessToken = this.jwtService.sign({ sub: userId });
-        const refreshToken = this.jwtService.sign({ sub: userId });
+        const accessToken = this.jwtService.sign({ sub: userId }, {
+            expiresIn: '1d',
+        });
+        const refreshToken = this.jwtService.sign({ sub: userId }, {
+            secret: process.env.JWT_REFRESH_SECRET || 'echoo-refresh-secret-key',
+            expiresIn: '7d',
+        });
         console.log('✅ Tokens generated successfully');
         console.log('- Access token length:', accessToken.length);
         console.log('- Refresh token length:', refreshToken.length);
