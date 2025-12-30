@@ -183,6 +183,11 @@ export const logout = async (): Promise<void> => {
   // 断开WebSocket连接
   webSocketService.disconnect();
 
+  // 显示登出提示
+  import("./toast").then(({ toast }) => {
+    toast.success("已成功退出登录");
+  });
+
   setAuthState({
     user: null,
     isAuthenticated: false,

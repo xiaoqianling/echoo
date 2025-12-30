@@ -1,5 +1,6 @@
 import { createSignal } from "solid-js";
 import { authStore } from "../../../shared/stores/authStore";
+import { toast } from "../../../shared/stores/toast";
 import { A } from "@solidjs/router";
 
 export const LoginPage = () => {
@@ -15,8 +16,11 @@ export const LoginPage = () => {
 
     try {
       await authStore.login(email(), password());
+      toast.success("登录成功！");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      const errorMessage = err instanceof Error ? err.message : "登录失败";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
