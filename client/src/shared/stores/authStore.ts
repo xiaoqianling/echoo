@@ -132,12 +132,35 @@ export const login = async (email: string, password: string): Promise<User> => {
       isInitialized: true,
     });
 
+    // 设置WebSocket连接
+    await webSocketService.connect(response.accessToken);
+
     // 启动自动刷新
     AutoRefreshManager.start();
 
+    // 显示登录成功提示
+    import("./toast").then(({ toast }) => {
+      toast.success("登录成功");
+    });
+
     return response.user;
   } catch (error) {
-    setAuthState({ isLoading: false });
+    console.error("Login failed:", error);
+
+    // 断开WebSocket连接
+    webSocketService.disconnect();
+
+    setAuthState({
+      isAuthenticated: false,
+      user: null,
+      isLoading: false,
+    });
+
+    // 显示登录失败提示
+    import("./toast").then(({ toast }) => {
+      toast.error("登录失败，请检查邮箱和密码");
+    });
+
     throw error;
   }
 };
@@ -172,27 +195,31 @@ export const register = async (
 
 // 登出函数
 export const logout = async (): Promise<void> => {
-  setAuthState({ isLoading: true });
+  try {
+    await apiService.logout();
+  } catch (error) {
+    console.error("Logout error:", error);
+  } finally {
+    // 停止自动刷新
+    AutoRefreshManager.stop();
 
-  // 停止自动刷新
-  AutoRefreshManager.stop();
+    // 清除tokens
+    TokenManager.clearTokens();
 
-  // 清除tokens
-  TokenManager.clearTokens();
+    // 断开WebSocket连接
+    webSocketService.disconnect();
 
-  // 断开WebSocket连接
-  webSocketService.disconnect();
+    // 显示登出提示
+    import("./toast").then(({ toast }) => {
+      toast.success("已安全登出");
+    });
 
-  // 显示登出提示
-  import("./toast").then(({ toast }) => {
-    toast.success("已成功退出登录");
-  });
-
-  setAuthState({
-    user: null,
-    isAuthenticated: false,
-    isLoading: false,
-  });
+    setAuthState({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+    });
+  }
 };
 
 // 刷新tokens
@@ -238,6 +265,7 @@ export const initializeAuth = async (): Promise<void> => {
       "❌ initializeAuth: No valid tokens found, clearing and exiting"
     );
     TokenManager.clearTokens();
+    webSocketService.disconnect();
     setAuthState({
       isLoading: false,
       isInitialized: true,
@@ -271,6 +299,10 @@ export const initializeAuth = async (): Promise<void> => {
       isInitialized: true,
     });
 
+    // 设置WebSocket连接
+    console.log("🔌 initializeAuth: Setting up WebSocket connection");
+    await webSocketService.connect(tokens.accessToken!);
+
     console.log("🔄 initializeAuth: Starting auto refresh manager");
     // 启动自动刷新
     AutoRefreshManager.start();
@@ -287,6 +319,7 @@ export const initializeAuth = async (): Promise<void> => {
       );
       // 刷新也失败，清除状态
       TokenManager.clearTokens();
+      webSocketService.disconnect();
       setAuthState({
         isLoading: false,
         isInitialized: true,

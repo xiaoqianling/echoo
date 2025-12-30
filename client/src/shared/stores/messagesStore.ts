@@ -79,7 +79,10 @@ export const clearMessages = (): void => {
 };
 
 // 绑定WebSocket消息处理
-webSocketService.onNewMessage(handleNewMessage);
+webSocketService.on('message:new', handleNewMessage);
+webSocketService.on('message:batch', (messages: Record<string, Message>) => {
+  Object.values(messages).forEach(handleNewMessage);
+});
 
 // 导出消息store
 export const messagesStore = {

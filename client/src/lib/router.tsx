@@ -5,6 +5,7 @@ import { BlogPage } from "../apps/blog/pages/BlogPage";
 import { DashboardPage } from "../apps/echoo/pages/DashboardPage";
 import { MessagesPage } from "../apps/echoo/pages/MessagesPage";
 import TestPage from "../apps/echoo/pages/TestPage";
+import PushTestPage from "../apps/echoo/pages/PushTestPage";
 import { SettingsPage } from "../apps/echoo/pages/SettingsPage";
 import { LoginPage } from "../apps/echoo/pages/LoginPage";
 import { RegisterPage } from "../apps/echoo/pages/RegisterPage";
@@ -35,14 +36,36 @@ export const routes: RouteDefinition[] = [
         component: EchooLayout,
         children: [
           // 受保护的路由
-          { path: "", component: () => <ProtectedRoute component={DashboardPage} /> },
-          { path: "messages", component: () => <ProtectedRoute component={MessagesPage} /> },
-          { path: "test", component: () => <ProtectedRoute component={TestPage} /> },
-          { path: "settings", component: () => <ProtectedRoute component={SettingsPage} /> },
-          
+          {
+            path: "",
+            component: () => <ProtectedRoute component={DashboardPage} />,
+          },
+          {
+            path: "messages",
+            component: () => <ProtectedRoute component={MessagesPage} />,
+          },
+          {
+            path: "test",
+            component: () => <ProtectedRoute component={TestPage} />,
+          },
+          {
+            path: "push-test",
+            component: () => <ProtectedRoute component={PushTestPage} />,
+          },
+          {
+            path: "settings",
+            component: () => <ProtectedRoute component={SettingsPage} />,
+          },
+
           // 公开路由（仅未登录用户可访问）
-          { path: "login", component: () => <PublicRoute component={LoginPage} /> },
-          { path: "register", component: () => <PublicRoute component={RegisterPage} /> },
+          {
+            path: "login",
+            component: () => <PublicRoute component={LoginPage} />,
+          },
+          {
+            path: "register",
+            component: () => <PublicRoute component={RegisterPage} />,
+          },
         ],
       },
     ],

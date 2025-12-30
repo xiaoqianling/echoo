@@ -41,7 +41,22 @@ export class MessagesService {
     const savedMessage = await this.messagesRepository.save(message);
 
     // 使用WebSocket发送消息通知
-    await this.webSocketGateway.sendNewMessageNotification(savedMessage);
+    const notification = {
+      id: savedMessage.id,
+      title: savedMessage.title,
+      desp: savedMessage.desp,
+      short: savedMessage.short,
+      tags: savedMessage.tags,
+      sender: {
+        id: savedMessage.sender.id,
+      },
+      organization: savedMessage.organization ? {
+        id: savedMessage.organization.id,
+      } : undefined,
+      createdAt: savedMessage.createdAt,
+    };
+    
+    await this.webSocketGateway.sendNewMessageNotification(notification);
 
     return savedMessage;
   }
