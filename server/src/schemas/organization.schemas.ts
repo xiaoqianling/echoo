@@ -12,5 +12,10 @@ export const AddMemberSchema = z.object({
   }),
 });
 
+export const PublishMessageSchema = z.object({
+  content: z.string().min(1, '消息内容不能为空'),
+});
+
 export type CreateOrganizationDto = z.infer<typeof CreateOrganizationSchema>;
 export type AddMemberDto = z.infer<typeof AddMemberSchema>;
+export type PublishMessageDto = z.infer<typeof PublishMessageSchema>;

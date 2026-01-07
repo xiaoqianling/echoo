@@ -14,6 +14,7 @@ import type { AuthenticatedRequest } from '../common/interfaces/request.interfac
 import {
   CreateOrganizationSchema,
   AddMemberSchema,
+  PublishMessageSchema,
 } from '../schemas/organization.schemas';
 
 @Controller('organizations')
@@ -67,5 +68,85 @@ export class OrganizationsController {
     @Req() req: AuthenticatedRequest,
   ) {
     return this.organizationsService.removeMember(id, userId, req.user);
+  }
+
+  // 发布组织消息
+  @Post(':id/messages')
+  @UseGuards(AuthGuard('jwt'))
+  publishMessage(
+    @Param('id') id: string,
+    @Body() body: unknown,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const validatedData = PublishMessageSchema.parse(body);
+    return this.organizationsService.publishMessage(
+      id,
+      validatedData.content,
+      req.user,
+    );
+  }
+
+  // 获取组织消息列表
+  @Get(':id/messages')
+  @UseGuards(AuthGuard('jwt'))
+  getOrganizationMessages(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.organizationsService.getOrganizationMessages(id, req.user);
+  }
+
+  // 任命管理员
+  @Post(':id/members/:userId/promote')
+  @UseGuards(AuthGuard('jwt'))
+  promoteMember(
+    @Param('id') id: string,
+    @Param('userId') userId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.organizationsService.promoteMember(id, userId, req.user);
+  }
+
+  // 移除管理员权限
+  @Post(':id/members/:userId/demote')
+  @UseGuards(AuthGuard('jwt'))
+  demoteAdmin(
+    @Param('id') id: string,
+    @Param('userId') userId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.organizationsService.demoteAdmin(id, userId, req.user);
+  }
+
+  // 转移组织所有权
+  @Post(':id/transfer-ownership')
+  @UseGuards(AuthGuard('jwt'))
+  transferOwnership(
+    @Param('id') id: string,
+    @Body('newOwnerId') newOwnerId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.organizationsService.transferOwnership(
+      id,
+      newOwnerId,
+      req.user,
+    );
+  }
+
+  // 解散组织
+  @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
+  deleteOrganization(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.organizationsService.deleteOrganization(id, req.user);
+  }
+
+  // 退出组织
+  @Post(':id/leave')
+  @UseGuards(AuthGuard('jwt'))
+  leaveOrganization(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    return this.organizationsService.leaveOrganization(id, req.user);
   }
 }
