@@ -105,6 +105,11 @@ class WebSocketService {
         this.handleMessage("message:new", message);
       });
 
+      // 兼容服务器直接发送message事件
+      this.socket.on("message", (message: Message) => {
+        this.handleMessage("message:new", message);
+      });
+
       // 批量消息事件
       this.socket.on("message:batch", (messages: Record<string, Message>) => {
         this.handleBatchMessages(messages);
@@ -198,6 +203,8 @@ class WebSocketService {
 
   // 监听消息事件
   on(event: string, callback: (message: Message) => void): void {
+    console.log("Chill 监听事件", event);
+
     if (!this.messageCallbacks.has(event)) {
       this.messageCallbacks.set(event, []);
     }

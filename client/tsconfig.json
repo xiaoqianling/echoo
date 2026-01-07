@@ -15,6 +15,17 @@
 
     // Type Checking & Safety
     "strict": true,
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+
+    // Path Aliases
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@components/*": ["./shared/components/*"],
+      "@stores/*": ["./shared/stores/*"],
+      "@services/*": ["./shared/services/*"],
+      "@types/*": ["./shared/types/*"],
+      "@styles/*": ["./styles/*"]
+    }
   }
 }

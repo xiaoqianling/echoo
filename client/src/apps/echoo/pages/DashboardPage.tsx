@@ -1,10 +1,31 @@
-import { For, onMount } from "solid-js";
+import { For, onMount, createMemo } from "solid-js";
+import { messagesStore, fetchMessages } from "@stores/messagesStore";
+import { authStore } from "@stores/authStore";
+import { Message } from "@types";
 import {
-  messagesStore,
-  fetchMessages,
-} from "../../../shared/stores/messagesStore";
-import { authStore } from "../../../shared/stores/authStore";
-import { Message } from "../../../shared/types";
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+} from "chart.js";
+import { Line, Doughnut, Bar } from "solid-chartjs";
+
+// 注册 Chart.js 组件
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title
+);
 
 export const DashboardPage = () => {
   // 组件挂载时获取消息列表
@@ -13,11 +34,296 @@ export const DashboardPage = () => {
     fetchMessages();
   });
 
+  // 按天统计消息数量
+  const messagesByDay = createMemo(() => {
+    const counts: Record<string, number> = {};
+    const messages = messagesStore.messages;
+
+    // 获取最近7天的日期
+    const last7Days = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      return date.toISOString().split("T")[0];
+    }).reverse();
+
+    // 初始化计数为0
+    last7Days.forEach((day) => {
+      counts[day] = 0;
+    });
+
+    // 统计每天的消息数量
+    messages.forEach((msg) => {
+      const msgDate = new Date(msg.createdAt).toISOString().split("T")[0];
+      if (counts[msgDate] !== undefined) {
+        counts[msgDate]++;
+      }
+    });
+
+    return {
+      labels: last7Days,
+      values: last7Days.map((day) => counts[day]),
+    };
+  });
+
+  // 按标签统计消息数量
+  const messagesByTag = createMemo(() => {
+    const tagCounts: Record<string, number> = {};
+
+    messagesStore.messages.forEach((msg) => {
+      msg.tags?.forEach((tag) => {
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      });
+    });
+
+    // 只显示前5个标签
+    const sortedTags = Object.entries(tagCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5);
+
+    return {
+      labels: sortedTags.map(([tag]) => tag),
+      values: sortedTags.map(([, count]) => count),
+    };
+  });
+
+  // 按组织统计消息数量
+  const messagesByOrganization = createMemo(() => {
+    const orgCounts: Record<string, number> = {};
+
+    messagesStore.messages.forEach((msg) => {
+      if (msg.organization) {
+        const orgName = msg.organization.name;
+        orgCounts[orgName] = (orgCounts[orgName] || 0) + 1;
+      }
+    });
+
+    return {
+      labels: Object.keys(orgCounts),
+      values: Object.values(orgCounts),
+    };
+  });
+
+  // 图表配置
+  const lineChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 1500,
+      easing: "easeInOutQuart" as const,
+    },
+    plugins: {
+      legend: {
+        position: "top" as const,
+        labels: {
+          font: {
+            family: "Segoe UI, system-ui, sans-serif",
+            size: 14,
+            weight: "bold" as const,
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: "最近7天消息趋势",
+        font: {
+          family: "Segoe UI, system-ui, sans-serif",
+          size: 18,
+          weight: "bold" as const,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          font: {
+            family: "Segoe UI, system-ui, sans-serif",
+            size: 12,
+          },
+        },
+      },
+      y: {
+        ticks: {
+          font: {
+            family: "Segoe UI, system-ui, sans-serif",
+            size: 12,
+          },
+        },
+      },
+    },
+  };
+
+  const doughnutChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      animateScale: true,
+      animateRotate: true,
+      duration: 1500,
+      easing: "easeInOutQuart" as const,
+    },
+    plugins: {
+      legend: {
+        position: "top" as const,
+        labels: {
+          font: {
+            family: "Segoe UI, system-ui, sans-serif",
+            size: 14,
+            weight: "bold" as const,
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: "消息标签分布",
+        font: {
+          family: "Segoe UI, system-ui, sans-serif",
+          size: 18,
+          weight: "bold" as const,
+        },
+      },
+    },
+  };
+
+  const barChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 1500,
+      easing: "easeInOutQuart" as const,
+    },
+    plugins: {
+      legend: {
+        position: "top" as const,
+        labels: {
+          font: {
+            family: "Segoe UI, system-ui, sans-serif",
+            size: 14,
+            weight: "bold" as const,
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: "组织消息分布",
+        font: {
+          family: "Segoe UI, system-ui, sans-serif",
+          size: 18,
+          weight: "bold" as const,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          font: {
+            family: "Segoe UI, system-ui, sans-serif",
+            size: 12,
+          },
+        },
+      },
+      y: {
+        ticks: {
+          font: {
+            family: "Segoe UI, system-ui, sans-serif",
+            size: 12,
+          },
+        },
+      },
+    },
+  };
+
+  // 图表数据
+  const lineChartData = {
+    labels: messagesByDay().labels,
+    datasets: [
+      {
+        label: "消息数量",
+        data: messagesByDay().values,
+        borderColor: "rgb(53, 162, 235)",
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+        tension: 0.4,
+        fill: true,
+        borderWidth: 3,
+        pointBackgroundColor: "rgb(53, 162, 235)",
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2,
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        animation: {
+          duration: 2000,
+          easing: "easeInOutQuart" as const,
+          from: {
+            opacity: 0,
+            y: "50%",
+          },
+        },
+      },
+    ],
+  };
+
+  const doughnutChartData = {
+    labels: messagesByTag().labels,
+    datasets: [
+      {
+        data: messagesByTag().values,
+        backgroundColor: [
+          "rgb(255, 99, 132)",
+          "rgb(54, 162, 235)",
+          "rgb(255, 205, 86)",
+          "rgb(75, 192, 192)",
+          "rgb(153, 102, 255)",
+        ],
+        borderColor: ["#fff", "#fff", "#fff", "#fff", "#fff"],
+        borderWidth: 3,
+        hoverOffset: 15,
+        animation: {
+          duration: 2000,
+          easing: "easeInOutQuart" as const,
+        },
+      },
+    ],
+  };
+
+  const barChartData = {
+    labels: messagesByOrganization().labels,
+    datasets: [
+      {
+        label: "消息数量",
+        data: messagesByOrganization().values,
+        backgroundColor: [
+          "rgba(53, 162, 235, 0.8)",
+          "rgba(255, 99, 132, 0.8)",
+          "rgba(255, 205, 86, 0.8)",
+          "rgba(75, 192, 192, 0.8)",
+          "rgba(153, 102, 255, 0.8)",
+        ],
+        borderColor: [
+          "rgb(53, 162, 235)",
+          "rgb(255, 99, 132)",
+          "rgb(255, 205, 86)",
+          "rgb(75, 192, 192)",
+          "rgb(153, 102, 255)",
+        ],
+        borderWidth: 2,
+        borderRadius: 8,
+        borderSkipped: false,
+        animation: {
+          duration: 2000,
+          easing: "easeInOutQuart" as const,
+          from: {
+            opacity: 0,
+            y: "100%",
+          },
+        },
+      },
+    ],
+  };
+
   return (
-    <div>
-      <div class="flex justify-between items-center mb-6">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-800">
+    <div class="dashboard-page">
+      <div class="flex justify-between items-center mb-8">
+        <div class="dashboard-header-content">
+          <h1 class="text-3xl font-bold text-gray-800 mb-2">
             Welcome, {authStore.user?.name}!
           </h1>
           <p class="text-gray-600">
@@ -26,8 +332,8 @@ export const DashboardPage = () => {
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm text-gray-500">Total Messages</p>
@@ -35,13 +341,13 @@ export const DashboardPage = () => {
                 {messagesStore.messages.length}
               </h3>
             </div>
-            <div class="bg-blue-100 p-3 rounded-full">
-              <span class="text-blue-600 text-xl">💬</span>
+            <div class="bg-blue-100 p-4 rounded-full transition-all duration-300 hover:bg-blue-200">
+              <span class="text-blue-600 text-2xl">💬</span>
             </div>
           </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm text-gray-500">Today's Messages</p>
@@ -55,13 +361,13 @@ export const DashboardPage = () => {
                 }
               </h3>
             </div>
-            <div class="bg-green-100 p-3 rounded-full">
-              <span class="text-green-600 text-xl">📅</span>
+            <div class="bg-green-100 p-4 rounded-full transition-all duration-300 hover:bg-green-200">
+              <span class="text-green-600 text-2xl">📅</span>
             </div>
           </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm text-gray-500">Unique Tags</p>
@@ -75,38 +381,62 @@ export const DashboardPage = () => {
                 }
               </h3>
             </div>
-            <div class="bg-purple-100 p-3 rounded-full">
-              <span class="text-purple-600 text-xl">🏷️</span>
+            <div class="bg-purple-100 p-4 rounded-full transition-all duration-300 hover:bg-purple-200">
+              <span class="text-purple-600 text-2xl">🏷️</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="mt-8">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-bold text-gray-800">Recent Messages</h2>
+      {/* 图表部分 */}
+      <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* 折线图 - 最近7天消息趋势 */}
+        <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+          <div class="h-80">
+            <Line options={lineChartOptions} data={lineChartData} />
+          </div>
+        </div>
+
+        {/* 环形图 - 消息标签分布 */}
+        <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+          <div class="h-80">
+            <Doughnut options={doughnutChartOptions} data={doughnutChartData} />
+          </div>
+        </div>
+
+        {/* 柱状图 - 组织消息分布 */}
+        <div class="bg-white rounded-xl shadow-lg p-6 lg:col-span-2 transition-all duration-300 hover:shadow-xl">
+          <div class="h-80">
+            <Bar options={barChartOptions} data={barChartData} />
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-gray-800">Recent Messages</h2>
         </div>
 
         {messagesStore.isLoading ? (
-          <div class="flex justify-center items-center py-10">
+          <div class="flex justify-center items-center py-10 bg-white rounded-xl shadow-lg">
             {messagesStore.isLoading ? "true" : "false"}
-            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
         ) : (
-          <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Title
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Sender
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Date
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Tags
                   </th>
                 </tr>
@@ -114,32 +444,32 @@ export const DashboardPage = () => {
               <tbody class="bg-white divide-y divide-gray-200">
                 <For each={messagesStore.messages.slice(0, 5)}>
                   {(message) => (
-                    <tr class="hover:bg-gray-50">
-                      <td class="px-6 py-4 whitespace-nowrap">
+                    <tr class="transition-all duration-300 hover:bg-gray-50 hover:shadow-sm">
+                      <td class="px-8 py-6 whitespace-nowrap">
                         <div class="text-sm font-medium text-gray-900">
                           {message.title}
                         </div>
                         {message.short && (
-                          <div class="text-sm text-gray-500">
+                          <div class="text-sm text-gray-500 mt-1">
                             {message.short}
                           </div>
                         )}
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
+                      <td class="px-8 py-6 whitespace-nowrap">
                         <div class="text-sm text-gray-900">
                           {message.sender.name}
                         </div>
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
+                      <td class="px-8 py-6 whitespace-nowrap">
                         <div class="text-sm text-gray-500">
                           {new Date(message.createdAt).toLocaleString()}
                         </div>
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
+                      <td class="px-8 py-6 whitespace-nowrap">
                         <div class="flex space-x-2">
                           <For each={message.tags || []}>
                             {(tag) => (
-                              <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                              <span class="px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full transition-all duration-300 hover:bg-blue-200">
                                 {tag}
                               </span>
                             )}

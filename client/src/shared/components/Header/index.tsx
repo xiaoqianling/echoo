@@ -1,9 +1,9 @@
 import { Show } from "solid-js";
-import { authStore } from "../stores/authStore";
-import { notificationsStore } from "../stores/notificationsStore";
+import "./styles.scss";
+import { notificationsStore } from "../../stores/notificationsStore";
+import { authStore } from "../../stores/authStore";
 
 export const Header = () => {
-
   const handleLogout = async () => {
     await authStore.logout();
   };
@@ -13,21 +13,21 @@ export const Header = () => {
   };
 
   return (
-    <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-      <div class="flex justify-between items-center">
-        <div class="flex items-center space-x-4">
-          <h1 class="text-xl font-bold text-gray-800">Echoo</h1>
+    <header class="header">
+      <div class="header-container">
+        <div class="header-brand">
+          <h1 class="header-title">Echoo</h1>
         </div>
-        <div class="flex items-center space-x-4">
+        <div class="header-actions">
           <Show when={authStore.user && !authStore.isLoading}>
-            <div class="flex items-center space-x-3">
+            <div class="header-user-info">
               <button
                 onClick={handleToggleNotifications}
-                class="relative text-gray-500 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-100"
+                class="header-notification-btn"
                 title="Notifications"
               >
                 <svg
-                  class="h-5 w-5"
+                  class="header-notification-btn-icon"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -40,22 +40,19 @@ export const Header = () => {
                   />
                 </svg>
                 <Show when={notificationsStore.unreadCount > 0}>
-                  <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  <span class="header-notification-btn-badge">
                     {notificationsStore.unreadCount}
                   </span>
                 </Show>
               </button>
-              <span class="text-gray-600">{authStore.user?.name}</span>
-              <button
-                onClick={handleLogout}
-                class="text-sm text-gray-500 hover:text-red-600 transition-colors"
-              >
+              <span class="header-username">{authStore.user?.name}</span>
+              <button onClick={handleLogout} class="header-logout-btn">
                 Logout
               </button>
             </div>
           </Show>
           <Show when={authStore.isLoading}>
-            <div class="text-gray-500">Loading...</div>
+            <div class="header-loading">Loading...</div>
           </Show>
         </div>
       </div>

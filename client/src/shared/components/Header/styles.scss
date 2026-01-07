@@ -1,0 +1,109 @@
+/* Header/styles.scss */
+@import '@styles/variables.scss';
+
+.header {
+  background-color: $bg-primary;
+  box-shadow: $shadow-md; // 使用变量阴影，增强层次感
+  border-bottom: 1px solid $border-primary;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-lg $radius-lg 0 0; // 顶部圆角，与Layout-main配合
+  transition: all $transition-normal; // 增加过渡效果，提升交互体验
+  
+  // 响应式调整
+  @media (max-width: 768px) {
+    padding: $spacing-sm $spacing-md;
+  }
+
+  &-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+  }
+
+  &-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &-notification-btn {
+    position: relative;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+    &:hover {
+      color: #3b82f6;
+      background-color: #f3f4f6;
+    }
+
+    &-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    &-badge {
+      position: absolute;
+      top: -0.25rem;
+      right: -0.25rem;
+      background-color: #ef4444;
+      color: white;
+      font-size: 0.75rem;
+      border-radius: 50%;
+      width: 1.25rem;
+      height: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+  }
+
+  &-username {
+    color: #4b5563;
+    font-size: 0.875rem;
+  }
+
+  &-logout-btn {
+    font-size: 0.875rem;
+    color: #6b7280;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+
+    &:hover {
+      color: #ef4444;
+      background-color: #fef2f2;
+    }
+  }
+
+  &-loading {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+}

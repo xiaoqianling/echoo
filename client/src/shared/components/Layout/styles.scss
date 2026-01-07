@@ -1,0 +1,31 @@
+/* Layout/styles.scss */
+@import '../../../../styles/variables.scss';
+
+.layout {
+  display: flex;
+  height: 100vh;
+  background-color: $bg-secondary;
+  overflow: hidden;
+
+  &-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    box-shadow: $shadow-lg; // 增加主内容区阴影，提升层次感
+    border-radius: $radius-lg; // 增加圆角，提升柔和感
+    margin: $spacing-sm; // 增加边距，让阴影可见
+    background-color: $bg-primary;
+  }
+
+  &-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-md;
+    
+    // 响应式调整
+    @media (max-width: 768px) {
+      padding: $spacing-sm;
+    }
+  }
+}

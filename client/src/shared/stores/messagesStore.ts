@@ -3,6 +3,7 @@ import { createStore } from "solid-js/store";
 import { apiService } from "../services/api";
 import { webSocketService } from "../services/websocket";
 import { Message } from "../types";
+import { toast } from "./toast";
 
 // 定义消息状态接口
 interface MessagesState {
@@ -63,9 +64,14 @@ export const sendMessage = async (data: {
 
 // 处理新消息
 export const handleNewMessage = (message: Message): void => {
+  console.log("🚀 Chill ~ handleNewMessage ~ message: 收到消息", message);
+  // 添加消息到列表
   setMessagesState((prev) => ({
     messages: [message, ...prev.messages],
   }));
+
+  // 显示 Toast 通知
+  toast.success(`收到新消息: ${message.title}`);
 };
 
 // 清除错误
@@ -79,8 +85,9 @@ export const clearMessages = (): void => {
 };
 
 // 绑定WebSocket消息处理
-webSocketService.on('message:new', handleNewMessage);
-webSocketService.on('message:batch', (messages: Record<string, Message>) => {
+webSocketService.on("message:new", handleNewMessage);
+webSocketService.on("message:batch", (messages: Record<string, Message>) => {
+  console.log("🚀 Chill ~ messages: 收到服务器消息", messages);
   Object.values(messages).forEach(handleNewMessage);
 });
 
