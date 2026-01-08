@@ -21,7 +21,7 @@ import {
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
-  @Post()
+  @Post('create')
   @UseGuards(AuthGuard('jwt'))
   create(@Body() body: unknown, @Req() req: AuthenticatedRequest) {
     const validatedData = CreateOrganizationSchema.parse(body);
@@ -32,19 +32,19 @@ export class OrganizationsController {
     );
   }
 
-  @Get()
+  @Get('list')
   @UseGuards(AuthGuard('jwt'))
   getOrganizations(@Req() req: AuthenticatedRequest) {
     return this.organizationsService.getOrganizations(req.user);
   }
 
-  @Get(':id')
+  @Get(':id/detail')
   @UseGuards(AuthGuard('jwt'))
   getOrganization(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     return this.organizationsService.getOrganizationById(id, req.user);
   }
 
-  @Post(':id/members')
+  @Post(':id/member/add')
   @UseGuards(AuthGuard('jwt'))
   addMember(
     @Param('id') id: string,
@@ -60,18 +60,18 @@ export class OrganizationsController {
     );
   }
 
-  @Delete(':id/members/:userId')
+  @Delete(':id/member/remove')
   @UseGuards(AuthGuard('jwt'))
   removeMember(
     @Param('id') id: string,
-    @Param('userId') userId: string,
+    @Body('userId') userId: string,
     @Req() req: AuthenticatedRequest,
   ) {
     return this.organizationsService.removeMember(id, userId, req.user);
   }
 
   // 发布组织消息
-  @Post(':id/messages')
+  @Post(':id/message/publish')
   @UseGuards(AuthGuard('jwt'))
   publishMessage(
     @Param('id') id: string,
@@ -81,13 +81,14 @@ export class OrganizationsController {
     const validatedData = PublishMessageSchema.parse(body);
     return this.organizationsService.publishMessage(
       id,
+      validatedData.title,
       validatedData.content,
       req.user,
     );
   }
 
   // 获取组织消息列表
-  @Get(':id/messages')
+  @Get(':id/message/list')
   @UseGuards(AuthGuard('jwt'))
   getOrganizationMessages(
     @Param('id') id: string,
@@ -97,29 +98,29 @@ export class OrganizationsController {
   }
 
   // 任命管理员
-  @Post(':id/members/:userId/promote')
+  @Post(':id/member/promote')
   @UseGuards(AuthGuard('jwt'))
   promoteMember(
     @Param('id') id: string,
-    @Param('userId') userId: string,
+    @Body('userId') userId: string,
     @Req() req: AuthenticatedRequest,
   ) {
     return this.organizationsService.promoteMember(id, userId, req.user);
   }
 
   // 移除管理员权限
-  @Post(':id/members/:userId/demote')
+  @Post(':id/member/demote')
   @UseGuards(AuthGuard('jwt'))
   demoteAdmin(
     @Param('id') id: string,
-    @Param('userId') userId: string,
+    @Body('userId') userId: string,
     @Req() req: AuthenticatedRequest,
   ) {
     return this.organizationsService.demoteAdmin(id, userId, req.user);
   }
 
   // 转移组织所有权
-  @Post(':id/transfer-ownership')
+  @Post(':id/owner/transfer')
   @UseGuards(AuthGuard('jwt'))
   transferOwnership(
     @Param('id') id: string,
@@ -134,7 +135,7 @@ export class OrganizationsController {
   }
 
   // 解散组织
-  @Delete(':id')
+  @Delete(':id/delete')
   @UseGuards(AuthGuard('jwt'))
   deleteOrganization(
     @Param('id') id: string,
@@ -144,9 +145,16 @@ export class OrganizationsController {
   }
 
   // 退出组织
-  @Post(':id/leave')
+  @Post(':id/member/leave')
   @UseGuards(AuthGuard('jwt'))
   leaveOrganization(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     return this.organizationsService.leaveOrganization(id, req.user);
+  }
+
+  // 获取组织成员列表
+  @Get(':id/member/list')
+  @UseGuards(AuthGuard('jwt'))
+  getMembers(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    return this.organizationsService.getMembers(id, req.user);
   }
 }

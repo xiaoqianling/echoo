@@ -13,6 +13,7 @@ export const AddMemberSchema = z.object({
 });
 
 export const PublishMessageSchema = z.object({
+  title: z.string().min(1, '消息标题不能为空'),
   content: z.string().min(1, '消息内容不能为空'),
 });
 

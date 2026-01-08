@@ -59,7 +59,7 @@ export class OrganizationsService {
     return savedOrganization;
   }
 
-  async getOrganizations(user: User): Promise<Organization[]> {
+  async getOrganizations(user: User): Promise<any[]> {
     // 获取用户创建的组织
     const ownedOrganizations = await this.organizationsRepository.find({
       where: { owner: { id: user.id } },
@@ -71,17 +71,45 @@ export class OrganizationsService {
       relations: ['organization'],
     });
 
-    const joinedOrganizations = memberOrganizations.map(
-      (member) => member.organization,
-    );
-
     // 合并并去重
-    const allOrganizations = [...ownedOrganizations, ...joinedOrganizations];
+    const allOrganizations = [
+      ...ownedOrganizations,
+      ...memberOrganizations.map((member) => member.organization),
+    ];
     const uniqueOrganizations = Array.from(
       new Map(allOrganizations.map((org) => [org.id, org])).values(),
     );
 
-    return uniqueOrganizations;
+    // 增强组织数据，添加角色和成员数
+    const enhancedOrganizations = await Promise.all(
+      uniqueOrganizations.map(async (org) => {
+        // 获取用户在该组织中的角色
+        let role = 'member';
+        if (org.owner?.id === user.id) {
+          role = 'owner';
+        } else {
+          const member = await this.organizationMembersRepository.findOne({
+            where: { organization: { id: org.id }, user: { id: user.id } },
+          });
+          if (member) {
+            role = member.role;
+          }
+        }
+
+        // 获取组织成员数
+        const memberCount = await this.organizationMembersRepository.count({
+          where: { organization: { id: org.id } },
+        });
+
+        return {
+          ...org,
+          role,
+          memberCount,
+        };
+      }),
+    );
+
+    return enhancedOrganizations;
   }
 
   async getOrganizationById(id: string, user: User): Promise<Organization> {
@@ -215,6 +243,7 @@ export class OrganizationsService {
   // 发布组织消息
   async publishMessage(
     organizationId: string,
+    title: string,
     content: string,
     currentUser: User,
   ): Promise<OrganizationMessage> {
@@ -239,6 +268,7 @@ export class OrganizationsService {
     }
 
     const message = this.organizationMessagesRepository.create({
+      title,
       content,
       organization,
       sender: currentUser,
@@ -437,5 +467,26 @@ export class OrganizationsService {
     if (result.affected === 0) {
       throw new NotFoundException('Member not found');
     }
+  }
+
+  // 获取组织成员列表
+  async getMembers(organizationId: string, currentUser: User): Promise<any[]> {
+    // 验证用户是否有权限访问该组织
+    await this.getOrganizationById(organizationId, currentUser);
+
+    // 获取组织成员
+    const members = await this.organizationMembersRepository.find({
+      where: { organization: { id: organizationId } },
+      relations: ['user'],
+    });
+
+    // 格式化成员数据
+    return members.map((member) => ({
+      id: member.user.id,
+      name: member.user.name || member.user.email.split('@')[0],
+      role: member.role,
+      email: member.user.email,
+      joinedAt: member.joinedAt,
+    }));
   }
 }

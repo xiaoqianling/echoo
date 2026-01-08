@@ -19,7 +19,7 @@ export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
   // 发送消息
-  @Post()
+  @Post('send')
   @UseGuards(AuthGuard('jwt'))
   send(@Body() body: unknown, @Req() req: AuthenticatedRequest) {
     const validatedData = SendMessageSchema.parse(body);
@@ -27,7 +27,7 @@ export class MessagesController {
   }
 
   // 获取消息列表
-  @Get()
+  @Get('list')
   @UseGuards(AuthGuard('jwt'))
   getMessages(
     @Req() req: AuthenticatedRequest,
@@ -37,7 +37,7 @@ export class MessagesController {
   }
 
   // 获取消息详情
-  @Get(':id')
+  @Get(':id/detail')
   @UseGuards(AuthGuard('jwt'))
   getMessage(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     return this.messagesService.getMessageById(id, req.user);

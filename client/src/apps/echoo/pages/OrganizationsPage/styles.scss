@@ -1,7 +1,7 @@
 /* OrganizationsPage/styles.scss */
 @use "sass:color";
 // 导入变量 - 使用@use方式需要通过命名空间访问变量
-@import '@styles/variables.scss';
+@import "@styles/variables.scss";
 
 // 定义圆角变量
 $radius-full: 9999px;
@@ -16,7 +16,7 @@ $radius-full: 9999px;
   justify-content: space-between;
   align-items: center;
   margin-bottom: $spacing-xl;
-  
+
   // 响应式调整
   @media (max-width: 640px) {
     flex-direction: column;
@@ -42,13 +42,13 @@ $radius-full: 9999px;
   cursor: pointer;
   transition: all $transition-normal;
   box-shadow: $shadow-sm;
-  
+
   &:hover {
     background-color: $primary-hover;
     box-shadow: $shadow-md;
     transform: translateY(-1px);
   }
-  
+
   // 响应式调整
   @media (max-width: 640px) {
     width: 100%;
@@ -60,16 +60,16 @@ $radius-full: 9999px;
   grid-template-columns: 1fr;
   gap: $spacing-xl;
   height: calc(100vh - 120px);
-  
+
   // 详情展开状态
   &.detail-open {
     grid-template-columns: 2fr 1fr;
-    
+
     @media (max-width: 1024px) {
       grid-template-columns: 1fr;
     }
   }
-  
+
   // 响应式调整
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -84,68 +84,68 @@ $radius-full: 9999px;
   transition: all $transition-normal;
   overflow: hidden;
   position: relative;
-  
+
   &:hover {
     box-shadow: $shadow-xl;
     transform: translateY(-2px);
   }
-  
+
   // 网格视图样式
   &--grid {
     overflow-y: auto;
   }
-  
+
   // 列表视图样式（详情展开时）
   &--list {
     overflow-y: auto;
     background-color: $bg-primary;
     border: 1px solid $border-primary;
-    
+
     .organizations-subtitle {
       font-size: $font-size-md;
       margin-bottom: $spacing-md;
     }
-    
+
     .organization-card {
       border: 1px solid transparent;
       padding: $spacing-md;
       margin-bottom: $spacing-sm;
       border-radius: $radius-md;
-      
+
       &:hover {
         background-color: $bg-secondary;
         transform: translateX(4px);
         box-shadow: $shadow-sm;
       }
-      
+
       &.active {
         background-color: rgba($primary-color, 0.1);
         border-color: $primary-color;
         box-shadow: $shadow-sm;
       }
-      
+
       &-header {
         margin-bottom: $spacing-xs;
       }
-      
+
       &-name {
         font-size: $font-size-base;
       }
-      
+
       &-description {
         display: none;
       }
-      
+
       &-footer {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        
+
         .organization-card-meta {
           flex-direction: row;
           gap: $spacing-md;
         }
-        
+
         .organization-card-actions {
           display: none;
         }
@@ -159,7 +159,7 @@ $radius-full: 9999px;
   font-weight: 700;
   color: $text-primary;
   margin-bottom: $spacing-xl;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .organizations-grid {
@@ -167,7 +167,7 @@ $radius-full: 9999px;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: $spacing-2xl;
   transition: all $transition-normal;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: $spacing-xl;
@@ -216,7 +216,7 @@ $radius-full: 9999px;
 // 卡片切换动画
 .organization-card {
   animation: cardSlideIn $transition-normal ease-out;
-  
+
   &.active {
     animation: cardPulse $transition-normal ease-out;
   }
@@ -276,10 +276,10 @@ $radius-full: 9999px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  
+
   // 渐变背景效果
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -290,34 +290,34 @@ $radius-full: 9999px;
     transition: transform $transition-normal;
     transform-origin: left;
   }
-  
+
   &:hover {
     transform: translateY(-8px) scale(1.02);
     box-shadow: $shadow-2xl;
     border-color: $primary-color;
-    
+
     &::before {
       transform: scaleX(1);
     }
-    
+
     .organization-card-name {
       color: $primary-color;
     }
   }
-  
+
   &.active {
     border-color: $primary-color;
     box-shadow: $shadow-xl;
     background-color: rgba($primary-color, 0.05);
-    
+
     &::before {
       transform: scaleX(1);
     }
   }
-  
+
   // 缩放动画（进入/退出）
   animation: cardSlideIn $transition-normal ease-out;
-  
+
   @keyframes cardSlideIn {
     from {
       opacity: 0;
@@ -393,7 +393,7 @@ $radius-full: 9999px;
   cursor: pointer;
   transition: all $transition-normal;
   box-shadow: $shadow-sm;
-  
+
   &:hover {
     background-color: $primary-hover;
     box-shadow: $shadow-md;
@@ -411,9 +411,9 @@ $radius-full: 9999px;
   cursor: pointer;
   transition: all $transition-normal;
   box-shadow: $shadow-sm;
-  
+
   &:hover {
-    background-color: color.adjust($danger-color,$lightness: -10%);
+    background-color: color.adjust($danger-color, $lightness: -10%);
     box-shadow: $shadow-md;
   }
 }
@@ -425,7 +425,7 @@ $radius-full: 9999px;
   padding: $spacing-xl;
   box-shadow: $shadow-md;
   transition: all $transition-normal;
-  
+
   &:hover {
     box-shadow: $shadow-lg;
   }
@@ -436,7 +436,7 @@ $radius-full: 9999px;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: $spacing-xl;
-  
+
   // 响应式调整
   @media (max-width: 768px) {
     flex-direction: column;
@@ -486,7 +486,7 @@ $radius-full: 9999px;
 .organization-detail-actions {
   display: flex;
   gap: $spacing-sm;
-  
+
   // 响应式调整
   @media (max-width: 768px) {
     width: 100%;
@@ -504,7 +504,7 @@ $radius-full: 9999px;
   cursor: pointer;
   transition: all $transition-normal;
   box-shadow: $shadow-sm;
-  
+
   &:hover {
     background-color: $bg-secondary;
     box-shadow: $shadow-md;
@@ -521,9 +521,9 @@ $radius-full: 9999px;
   cursor: pointer;
   transition: all $transition-normal;
   box-shadow: $shadow-sm;
-  
+
   &:hover {
-    background-color: color.adjust($danger-color,$lightness: -10%);
+    background-color: color.adjust($danger-color, $lightness: -10%);
     box-shadow: $shadow-md;
     transform: translateY(-1px);
   }
@@ -534,7 +534,7 @@ $radius-full: 9999px;
   gap: $spacing-md;
   border-bottom: 2px solid $border-primary;
   margin-bottom: $spacing-xl;
-  
+
   // 响应式调整
   @media (max-width: 768px) {
     flex-wrap: wrap;
@@ -551,19 +551,19 @@ $radius-full: 9999px;
   cursor: pointer;
   transition: all $transition-normal;
   font-size: $font-size-sm;
-  
+
   &:hover {
     color: $text-primary;
     border-bottom-color: $border-secondary;
   }
-  
+
   &.active {
     color: $primary-color;
     border-bottom-color: $primary-color;
     background-color: rgba($primary-color, 0.05);
     border-radius: $radius-md $radius-md 0 0;
   }
-  
+
   // 响应式调整
   @media (max-width: 768px) {
     flex: 1;
@@ -578,7 +578,7 @@ $radius-full: 9999px;
   padding: $spacing-lg;
   box-shadow: $shadow-sm;
   transition: all $transition-normal;
-  
+
   &:hover {
     box-shadow: $shadow-md;
   }
@@ -609,13 +609,13 @@ $radius-full: 9999px;
   align-items: center;
   transition: all $transition-normal;
   box-shadow: $shadow-sm;
-  
+
   &:hover {
     box-shadow: $shadow-md;
     transform: translateY(-1px);
     border-color: $primary-color;
   }
-  
+
   // 响应式调整
   @media (max-width: 640px) {
     flex-direction: column;
@@ -648,7 +648,7 @@ $radius-full: 9999px;
   padding: $spacing-xs $spacing-sm;
   border-radius: $radius-full;
   margin-right: $spacing-md;
-  
+
   // 响应式调整
   @media (max-width: 640px) {
     margin-right: 0;
@@ -659,7 +659,7 @@ $radius-full: 9999px;
 .member-actions {
   display: flex;
   gap: $spacing-sm;
-  
+
   // 响应式调整
   @media (max-width: 640px) {
     width: 100%;
@@ -678,7 +678,7 @@ $radius-full: 9999px;
   cursor: pointer;
   transition: all $transition-normal;
   box-shadow: $shadow-sm;
-  
+
   &:hover {
     background-color: $bg-secondary;
     color: $text-primary;
@@ -700,7 +700,7 @@ $radius-full: 9999px;
   border: 1px solid $border-primary;
   transition: all $transition-normal;
   box-shadow: $shadow-sm;
-  
+
   &:hover {
     box-shadow: $shadow-md;
     transform: translateY(-1px);
@@ -713,7 +713,7 @@ $radius-full: 9999px;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: $spacing-sm;
-  
+
   // 响应式调整
   @media (max-width: 640px) {
     flex-direction: column;
@@ -734,7 +734,7 @@ $radius-full: 9999px;
   gap: $spacing-md;
   font-size: $font-size-xs;
   color: $text-tertiary;
-  
+
   // 响应式调整
   @media (max-width: 640px) {
     justify-content: flex-start;
@@ -755,7 +755,7 @@ $radius-full: 9999px;
   border: 1px solid $border-primary;
   box-shadow: $shadow-sm;
   transition: all $transition-normal;
-  
+
   &:hover {
     box-shadow: $shadow-md;
   }
@@ -787,7 +787,7 @@ $radius-full: 9999px;
   font-size: $font-size-sm;
   transition: all $transition-normal;
   box-shadow: $shadow-sm;
-  
+
   &:focus {
     outline: none;
     border-color: $primary-color;
@@ -817,13 +817,13 @@ $radius-full: 9999px;
   cursor: pointer;
   transition: all $transition-normal;
   box-shadow: $shadow-sm;
-  
+
   &:hover {
     background-color: $primary-hover;
     box-shadow: $shadow-md;
     transform: translateY(-1px);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
@@ -833,16 +833,226 @@ $radius-full: 9999px;
 button {
   transition: all $transition-normal;
   font-family: inherit;
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
-    
+
     &:hover {
       transform: none;
       box-shadow: none;
     }
+  }
+}
+
+// 模态框样式
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn $transition-normal ease-out;
+}
+
+.modal-container {
+  background-color: $bg-primary;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-2xl;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn $transition-normal ease-out;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-xl;
+  border-bottom: 1px solid $border-primary;
+}
+
+.modal-title {
+  font-size: $font-size-xl;
+  font-weight: 600;
+  margin: 0;
+  color: $text-primary;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: $font-size-2xl;
+  color: $text-secondary;
+  cursor: pointer;
+  padding: $spacing-xs;
+  border-radius: $radius-md;
+  transition: all $transition-normal;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: $bg-secondary;
+    color: $text-primary;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.modal-body {
+  padding: $spacing-xl;
+}
+
+// 表单样式增强
+.form-group {
+  margin-bottom: $spacing-xl;
+
+  &:last-of-type {
+    margin-bottom: $spacing-2xl;
+  }
+}
+
+.form-label {
+  display: block;
+  margin-bottom: $spacing-sm;
+  font-weight: 600;
+  color: $text-primary;
+  font-size: $font-size-sm;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: 2px solid $border-primary;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $text-primary;
+  background-color: $bg-primary;
+  transition: all $transition-normal;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+
+  &:disabled {
+    background-color: $bg-tertiary;
+    border-color: $border-secondary;
+    color: $text-tertiary;
+    cursor: not-allowed;
+  }
+
+  &--error {
+    border-color: $danger-color;
+
+    &:focus {
+      border-color: $danger-color;
+      box-shadow: 0 0 0 3px rgba($danger-color, 0.1);
+    }
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: $line-height-relaxed;
+}
+
+.form-error-message {
+  display: block;
+  margin-top: $spacing-xs;
+  color: $danger-color;
+  font-size: $font-size-xs;
+  font-weight: 500;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  margin-top: $spacing-2xl;
+}
+
+.modal-cancel-btn {
+  background-color: $bg-tertiary;
+  color: $text-primary;
+  padding: $spacing-sm $spacing-xl;
+  border: 1px solid $border-primary;
+  border-radius: $radius-md;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-normal;
+  box-shadow: $shadow-sm;
+
+  &:hover {
+    background-color: $bg-secondary;
+    box-shadow: $shadow-md;
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: $shadow-sm;
+  }
+}
+
+.modal-submit-btn {
+  background-color: $primary-color;
+  color: white;
+  padding: $spacing-sm $spacing-xl;
+  border: none;
+  border-radius: $radius-md;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-normal;
+  box-shadow: $shadow-sm;
+
+  &:hover {
+    background-color: $primary-hover;
+    box-shadow: $shadow-md;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: $shadow-sm;
   }
 }

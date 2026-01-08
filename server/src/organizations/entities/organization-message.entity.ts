@@ -14,6 +14,9 @@ export class OrganizationMessage {
   id: string;
 
   @Column({ nullable: false })
+  title: string;
+
+  @Column({ nullable: false })
   content: string;
 
   @ManyToOne(() => Organization, { nullable: false })

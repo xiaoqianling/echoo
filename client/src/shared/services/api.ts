@@ -153,7 +153,7 @@ class ApiService {
 
   // 消息相关API
   async sendMessage(messageData: SendMessageForm): Promise<Message> {
-    return this.request<Message>("/messages", {
+    return this.request<Message>("/messages/send", {
       method: "POST",
       body: JSON.stringify(messageData),
     });
@@ -161,30 +161,32 @@ class ApiService {
 
   async getMessages(organizationId?: string): Promise<Message[]> {
     const endpoint = organizationId
-      ? `/messages?organizationId=${organizationId}`
-      : "/messages";
+      ? `/messages/list?organizationId=${organizationId}`
+      : "/messages/list";
 
     return this.request<Message[]>(endpoint);
   }
 
   async getMessage(messageId: string): Promise<Message> {
-    return this.request<Message>(`/messages/${messageId}`);
+    return this.request<Message>(`/messages/${messageId}/detail`);
   }
 
   // 组织相关API
   async getOrganizations(): Promise<Organization[]> {
-    return this.request<Organization[]>("/organizations");
+    return this.request<Organization[]>("/organizations/list");
   }
 
   async getOrganization(organizationId: string): Promise<Organization> {
-    return this.request<Organization>(`/organizations/${organizationId}`);
+    return this.request<Organization>(
+      `/organizations/${organizationId}/detail`
+    );
   }
 
   async createOrganization(
     name: string,
     description?: string
   ): Promise<Organization> {
-    return this.request<Organization>("/organizations", {
+    return this.request<Organization>("/organizations/create", {
       method: "POST",
       body: JSON.stringify({ name, description }),
     });
@@ -194,6 +196,101 @@ class ApiService {
     return this.request<Organization>("/organizations/join", {
       method: "POST",
       body: JSON.stringify({ inviteCode }),
+    });
+  }
+
+  // 成员管理API
+  async addMember(
+    organizationId: string,
+    userId: string,
+    role: string
+  ): Promise<void> {
+    return this.request<void>(`/organizations/${organizationId}/member/add`, {
+      method: "POST",
+      body: JSON.stringify({ userId, role }),
+    });
+  }
+
+  async removeMember(organizationId: string, userId: string): Promise<void> {
+    return this.request<void>(
+      `/organizations/${organizationId}/member/remove`,
+      {
+        method: "DELETE",
+        body: JSON.stringify({ userId }),
+      }
+    );
+  }
+
+  async promoteMember(organizationId: string, userId: string): Promise<void> {
+    return this.request<void>(
+      `/organizations/${organizationId}/member/promote`,
+      {
+        method: "POST",
+        body: JSON.stringify({ userId }),
+      }
+    );
+  }
+
+  async demoteMember(organizationId: string, userId: string): Promise<void> {
+    return this.request<void>(
+      `/organizations/${organizationId}/member/demote`,
+      {
+        method: "POST",
+        body: JSON.stringify({ userId }),
+      }
+    );
+  }
+
+  async leaveOrganization(organizationId: string): Promise<void> {
+    return this.request<void>(`/organizations/${organizationId}/member/leave`, {
+      method: "POST",
+    });
+  }
+
+  // 组织消息API
+  async publishMessage(
+    organizationId: string,
+    title: string,
+    content: string
+  ): Promise<void> {
+    return this.request<void>(
+      `/organizations/${organizationId}/message/publish`,
+      {
+        method: "POST",
+        body: JSON.stringify({ title, content }),
+      }
+    );
+  }
+
+  async getOrganizationMessages(organizationId: string): Promise<Message[]> {
+    return this.request<Message[]>(
+      `/organizations/${organizationId}/message/list`
+    );
+  }
+
+  async getOrganizationMembers(organizationId: string): Promise<Member[]> {
+    return this.request<Member[]>(
+      `/organizations/${organizationId}/member/list`
+    );
+  }
+
+  // 组织管理API
+  async transferOwnership(
+    organizationId: string,
+    newOwnerId: string
+  ): Promise<void> {
+    return this.request<void>(
+      `/organizations/${organizationId}/owner/transfer`,
+      {
+        method: "POST",
+        body: JSON.stringify({ newOwnerId }),
+      }
+    );
+  }
+
+  async deleteOrganization(organizationId: string): Promise<void> {
+    return this.request<void>(`/organizations/${organizationId}/delete`, {
+      method: "DELETE",
     });
   }
 

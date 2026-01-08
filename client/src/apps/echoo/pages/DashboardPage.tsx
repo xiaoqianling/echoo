@@ -2,35 +2,12 @@ import { For, onMount, createMemo } from "solid-js";
 import { messagesStore, fetchMessages } from "@stores/messagesStore";
 import { authStore } from "@stores/authStore";
 import { Message } from "@types";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-} from "chart.js";
-import { Line, Doughnut, Bar } from "solid-chartjs";
-
-// 注册 Chart.js 组件
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title
-);
+import { LineChart, DonutChart, BarChart } from "@/~/components/ui/charts";
+import { unwrap } from "solid-js/store";
 
 export const DashboardPage = () => {
   // 组件挂载时获取消息列表
   onMount(() => {
-    console.log("🚀 ~ DashboardPage ~ onMount:");
     fetchMessages();
   });
 
@@ -48,7 +25,7 @@ export const DashboardPage = () => {
 
     // 初始化计数为0
     last7Days.forEach((day) => {
-      counts[day] = 0;
+      counts[day.toString()] = 0;
     });
 
     // 统计每天的消息数量
@@ -59,9 +36,16 @@ export const DashboardPage = () => {
       }
     });
 
+    console.log(
+      "🚀 Chill ~ DashboardPage ~ counts: !!!",
+      counts,
+      unwrap(messages)
+    );
     return {
       labels: last7Days,
-      values: last7Days.map((day) => counts[day]),
+      values: last7Days.map((day) => {
+        return counts[day];
+      }),
     };
   });
 
@@ -232,92 +216,35 @@ export const DashboardPage = () => {
     },
   };
 
-  // 图表数据
-  const lineChartData = {
+  // 图表数据 - 使用createMemo使其响应式
+  const lineChartData = createMemo(() => ({
     labels: messagesByDay().labels,
     datasets: [
       {
         label: "消息数量",
         data: messagesByDay().values,
-        borderColor: "rgb(53, 162, 235)",
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-        tension: 0.4,
-        fill: true,
-        borderWidth: 3,
-        pointBackgroundColor: "rgb(53, 162, 235)",
-        pointBorderColor: "#fff",
-        pointBorderWidth: 2,
-        pointRadius: 6,
-        pointHoverRadius: 8,
-        animation: {
-          duration: 2000,
-          easing: "easeInOutQuart" as const,
-          from: {
-            opacity: 0,
-            y: "50%",
-          },
-        },
       },
     ],
-  };
+  }));
 
-  const doughnutChartData = {
+  const doughnutChartData = createMemo(() => ({
     labels: messagesByTag().labels,
     datasets: [
       {
         data: messagesByTag().values,
-        backgroundColor: [
-          "rgb(255, 99, 132)",
-          "rgb(54, 162, 235)",
-          "rgb(255, 205, 86)",
-          "rgb(75, 192, 192)",
-          "rgb(153, 102, 255)",
-        ],
-        borderColor: ["#fff", "#fff", "#fff", "#fff", "#fff"],
-        borderWidth: 3,
-        hoverOffset: 15,
-        animation: {
-          duration: 2000,
-          easing: "easeInOutQuart" as const,
-        },
       },
     ],
-  };
+  }));
 
-  const barChartData = {
+  const barChartData = createMemo(() => ({
     labels: messagesByOrganization().labels,
     datasets: [
       {
         label: "消息数量",
         data: messagesByOrganization().values,
-        backgroundColor: [
-          "rgba(53, 162, 235, 0.8)",
-          "rgba(255, 99, 132, 0.8)",
-          "rgba(255, 205, 86, 0.8)",
-          "rgba(75, 192, 192, 0.8)",
-          "rgba(153, 102, 255, 0.8)",
-        ],
-        borderColor: [
-          "rgb(53, 162, 235)",
-          "rgb(255, 99, 132)",
-          "rgb(255, 205, 86)",
-          "rgb(75, 192, 192)",
-          "rgb(153, 102, 255)",
-        ],
-        borderWidth: 2,
-        borderRadius: 8,
-        borderSkipped: false,
-        animation: {
-          duration: 2000,
-          easing: "easeInOutQuart" as const,
-          from: {
-            opacity: 0,
-            y: "100%",
-          },
-        },
       },
     ],
-  };
+  }));
 
   return (
     <div class="dashboard-page">
@@ -393,21 +320,21 @@ export const DashboardPage = () => {
         {/* 折线图 - 最近7天消息趋势 */}
         <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
           <div class="h-80">
-            <Line options={lineChartOptions} data={lineChartData} />
+            <LineChart data={lineChartData()} />
           </div>
         </div>
 
         {/* 环形图 - 消息标签分布 */}
         <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
           <div class="h-80">
-            <Doughnut options={doughnutChartOptions} data={doughnutChartData} />
+            <DonutChart data={doughnutChartData()} />
           </div>
         </div>
 
         {/* 柱状图 - 组织消息分布 */}
         <div class="bg-white rounded-xl shadow-lg p-6 lg:col-span-2 transition-all duration-300 hover:shadow-xl">
           <div class="h-80">
-            <Bar options={barChartOptions} data={barChartData} />
+            <BarChart data={barChartData()} />
           </div>
         </div>
       </div>

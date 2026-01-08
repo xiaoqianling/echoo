@@ -51,12 +51,12 @@ export const routes: RouteDefinition[] = [
             path: "settings",
             component: () => <ProtectedRoute component={SettingsPage} />,
           },
+
+          // 公开路由（仅未登录用户可访问）
           {
             path: "login",
             component: () => <PublicRoute component={LoginPage} />,
           },
-
-          // 公开路由（仅未登录用户可访问）
           {
             path: "register",
             component: () => <PublicRoute component={RegisterPage} />,
