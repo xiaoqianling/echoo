@@ -1,62 +1,84 @@
-import { A } from '@solidjs/router';
+import { A } from "@solidjs/router";
+import "./home.scss";
 
 export const HomePage = () => {
   return (
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center justify-center p-6">
-      <div class="text-center mb-12">
-        <h1 class="text-5xl font-bold text-gray-800 mb-4">Welcome to Echoo Platform</h1>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-          A unified platform with micro-frontend architecture, connecting multiple services and applications.
+    <div class="home-page">
+      <div class="hero-section">
+        <h1>Welcome to Echoo Platform</h1>
+        <p>
+          A unified platform with micro-frontend architecture, connecting
+          multiple services and applications.
         </p>
       </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full">
+
+      <div class="cards-grid">
         {/* Echoo Platform Card */}
-        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 border border-gray-200">
-          <div class="text-center mb-6">
-            <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-blue-600 text-4xl">📢</span>
+        <div class="app-card">
+          <div class="card-header">
+            <div class="icon-wrapper echoo">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon echoo"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M18 8a6 6 0 0 0-6-6 6 6 0 0 0-6 6c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
             </div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Echoo</h2>
-            <p class="text-gray-600">Real-time notification and messaging system</p>
+            <h2>Echoo</h2>
+            <p>Real-time notification and messaging system</p>
           </div>
-          <p class="text-gray-700 mb-6">
-            Send and receive real-time messages, manage notifications, and test your integration with our powerful API.
+          <p class="description">
+            Send and receive real-time messages, manage notifications, and test
+            your integration with our powerful API.
           </p>
-          <div class="flex justify-center">
-            <A 
-              href="/echoo" 
-              class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-            >
+          <div class="actions">
+            <A href="/echoo" class="enter-btn echoo">
               Enter Echoo
             </A>
           </div>
         </div>
-        
+
         {/* Blog Platform Card */}
-        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 border border-gray-200">
-          <div class="text-center mb-6">
-            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-green-600 text-4xl">📝</span>
+        <div class="app-card">
+          <div class="card-header">
+            <div class="icon-wrapper blog">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon blog"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
             </div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Blog</h2>
-            <p class="text-gray-600">Modern blogging platform</p>
+            <h2>Blog</h2>
+            <p>Modern blogging platform</p>
           </div>
-          <p class="text-gray-700 mb-6">
-            Create and manage blog posts, categorize content, and engage with your audience on our feature-rich blogging platform.
+          <p class="description">
+            Create and manage blog posts, categorize content, and engage with
+            your audience on our feature-rich blogging platform.
           </p>
-          <div class="flex justify-center">
-            <A 
-              href="/blog" 
-              class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
-            >
+          <div class="actions">
+            <A href="/blog" class="enter-btn blog">
               Enter Blog
             </A>
           </div>
         </div>
       </div>
-      
-      <div class="mt-12 text-gray-500 text-sm">
+
+      <div class="footer-info">
         Built with SolidJS and Micro-frontend Architecture
       </div>
     </div>

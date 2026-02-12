@@ -1,0 +1,134 @@
+@import "../../../styles/variables";
+
+.aemeath-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  // Lighter, dreamier base gradient (Pink -> Lavender -> Light Blue -> Golden)
+  background: linear-gradient(135deg, #ffdce4 0%, #e0c3fc 30%, #bde0fe 60%, #fff1b8 100%);
+  pointer-events: none;
+  // Use hardware acceleration for the whole container
+  transform: translateZ(0);
+
+  .nebula-layer {
+    position: absolute;
+    border-radius: 50%;
+    // Reduce blur radius for performance (100px -> 60px)
+    filter: blur(60px);
+    opacity: 0.5;
+    animation: drift 20s infinite alternate ease-in-out;
+    mix-blend-mode: multiply;
+    will-change: transform; // Hint to browser
+
+    &.layer-1 {
+      top: -10%;
+      left: -10%;
+      width: 70%;
+      height: 70%;
+      background: radial-gradient(circle, #ffb7b2, transparent 70%);
+      animation-duration: 25s;
+    }
+
+    &.layer-2 {
+      bottom: -10%;
+      right: -10%;
+      width: 70%;
+      height: 70%;
+      background: radial-gradient(circle, #a2d2ff, transparent 70%);
+      animation-duration: 30s;
+      animation-delay: -5s;
+    }
+
+    &.layer-3 {
+      top: 30%;
+      left: 30%;
+      width: 50%;
+      height: 50%;
+      background: radial-gradient(circle, #cdb4db, transparent 70%);
+      animation-duration: 35s;
+      animation-delay: -10s;
+    }
+  }
+
+  .stars-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #4b5563; // Dark gray/blue for visibility on light bg
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle infinite ease-in-out;
+  }
+
+  .meteors-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-45deg); // Rotate container instead of individual meteors
+  }
+
+  .meteor {
+    position: absolute;
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 105, 180, 0.8));
+    border-radius: 2px;
+    opacity: 0;
+    animation: meteor-fall linear infinite;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 5px 1px rgba(255, 105, 180, 0.6);
+    }
+  }
+}
+
+@keyframes drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(5%, 5%, 0) scale(1.05); }
+}
+
+@keyframes twinkle {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 0.8; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(0.5); }
+}
+
+@keyframes meteor-fall {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  10% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-500px); // Move left (because container is rotated)
+  }
+}

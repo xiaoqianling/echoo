@@ -53,7 +53,7 @@ class WebSocketService {
       this.setConnectionState(ConnectionState.CONNECTING);
       console.log("🔌 Starting WebSocket connection...");
 
-      this.socket = io(WS_BASE_URL, {
+      this.socket = io(`${WS_BASE_URL}/echoo`, {
         auth: {
           token,
         },

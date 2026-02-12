@@ -6,6 +6,7 @@ import {
 } from "../../../shared/services/websocket";
 import { Message } from "../../../shared/types";
 import { notificationsStore } from "../../../shared/stores/notificationsStore";
+import "./push-test.scss";
 
 export default function PushTestPage() {
   const [form, setForm] = createSignal({
@@ -163,136 +164,120 @@ export default function PushTestPage() {
   };
 
   return (
-    <div class="container mx-auto p-6">
-      <h1 class="text-3xl font-bold mb-6">推送功能测试页面</h1>
+    <div class="push-test-page">
+      <h1 class="page-title">推送功能测试页面</h1>
 
       {/* 统计信息 */}
-      <div class="bg-gray-50 p-4 rounded-lg mb-6">
-        <h2 class="text-xl font-semibold mb-3">系统状态</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="text-center">
-            <div class="text-2xl font-bold text-blue-600">
-              {stats().notifications}
-            </div>
-            <div class="text-sm text-gray-600">总通知数</div>
+      <div class="status-panel">
+        <h2 class="status-title">系统状态</h2>
+        <div class="status-grid">
+          <div class="status-item">
+            <div class="status-value blue">{stats().notifications}</div>
+            <div class="status-label">总通知数</div>
           </div>
-          <div class="text-center">
-            <div class="text-2xl font-bold text-red-600">{stats().unread}</div>
-            <div class="text-sm text-gray-600">未读通知</div>
+          <div class="status-item">
+            <div class="status-value red">{stats().unread}</div>
+            <div class="status-label">未读通知</div>
           </div>
-          <div class="text-center">
-            <div class="text-2xl font-bold capitalize">
+          <div class="status-item">
+            <div class="status-value">
               <span
-                class={{
-                  "text-green-600": stats().wsState === "connected",
-                  "text-yellow-600":
-                    stats().wsState === "connecting" ||
-                    stats().wsState === "reconnecting",
-                  "text-red-600": stats().wsState === "disconnected",
-                }}
+                class={`status-text ${
+                  stats().wsState === "connected"
+                    ? "connected"
+                    : stats().wsState === "connecting" ||
+                      stats().wsState === "reconnecting"
+                    ? "connecting"
+                    : "disconnected"
+                }`}
               >
                 {stats().wsState}
               </span>
             </div>
-            <div class="text-sm text-gray-600">WebSocket状态</div>
+            <div class="status-label">WebSocket状态</div>
           </div>
-          <div class="text-center">
-            <div class="text-2xl font-bold text-orange-600">
-              {stats().retryCount}
-            </div>
-            <div class="text-sm text-gray-600">重试次数</div>
+          <div class="status-item">
+            <div class="status-value orange">{stats().retryCount}</div>
+            <div class="status-label">重试次数</div>
           </div>
         </div>
 
-        <div class="mt-4 flex space-x-2">
+        <div class="status-actions">
           <button
             onClick={reconnectWebSocket}
-            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
+            class="btn-reconnect"
             disabled={connectionState() === ConnectionState.CONNECTED}
           >
             重新连接
           </button>
           <button
             onClick={disconnectWebSocket}
-            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400"
+            class="btn-disconnect"
             disabled={connectionState() === ConnectionState.DISCONNECTED}
           >
             断开连接
           </button>
-          <button
-            onClick={clearNotifications}
-            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-          >
+          <button onClick={clearNotifications} class="btn-clear">
             清空通知
           </button>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="content-grid">
         {/* 发送消息表单 */}
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-semibold mb-4">发送测试消息</h2>
+        <div class="card">
+          <div class="card-header">
+            <h2>发送测试消息</h2>
+          </div>
 
-          <form onSubmit={handleSubmit} class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                标题 *
-              </label>
+          <form onSubmit={handleSubmit}>
+            <div class="form-group">
+              <label>标题 *</label>
               <input
                 type="text"
                 value={form().title}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, title: e.target.value }))
                 }
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Markdown内容
-              </label>
+            <div class="form-group">
+              <label>Markdown内容</label>
               <textarea
                 value={form().desp}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, desp: e.target.value }))
                 }
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 rows={4}
               ></textarea>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                标签 (用逗号分隔)
-              </label>
+            <div class="form-group">
+              <label>标签 (用逗号分隔)</label>
               <input
                 type="text"
                 value={form().tags.join(", ")}
                 onChange={handleTagsChange}
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="test, push, demo"
               />
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                简短描述
-              </label>
+            <div class="form-group">
+              <label>简短描述</label>
               <input
                 type="text"
                 value={form().short}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, short: e.target.value }))
                 }
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <button
               type="submit"
-              class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400"
+              class="btn-submit"
               disabled={connectionState() !== ConnectionState.CONNECTED}
             >
               发送消息
@@ -300,68 +285,53 @@ export default function PushTestPage() {
           </form>
 
           <Show when={error()}>
-            <div class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div class="message-alert error">
               <strong>错误:</strong> {error()}
             </div>
           </Show>
 
           <Show when={response()}>
-            <div class="mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+            <div class="message-alert success">
               <strong>发送成功:</strong> 消息ID: {response()?.id}
             </div>
           </Show>
         </div>
 
         {/* WebSocket消息列表 */}
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold">实时消息列表</h2>
-            <button
-              onClick={clearMessages}
-              class="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600"
-            >
+        <div class="card">
+          <div class="card-header">
+            <h2>实时消息列表</h2>
+            <button onClick={clearMessages} class="btn-sm">
               清空列表
             </button>
           </div>
 
-          <div class="space-y-3 max-h-96 overflow-y-auto">
+          <div class="messages-list">
             <Show
               when={wsMessages().length > 0}
               fallback={
-                <div class="text-center text-gray-500 py-8">
-                  <div class="text-4xl mb-2">📨</div>
+                <div class="empty-state">
+                  <div class="icon">📨</div>
                   <div>等待接收消息...</div>
                 </div>
               }
             >
               <For each={wsMessages()}>
                 {(message, index) => (
-                  <div class="p-3 bg-blue-50 border border-blue-200 rounded">
-                    <div class="flex justify-between items-start">
-                      <div>
-                        <div class="font-semibold text-blue-800">
-                          {message.title}
-                        </div>
-                        <div class="text-sm text-blue-600 mt-1">
-                          {message.short}
-                        </div>
-                        <div class="text-xs text-gray-500 mt-1">
-                          ID: {message.id} | 时间:{" "}
-                          {new Date(message.createdAt).toLocaleString()}
-                        </div>
-                      </div>
-                      <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                        #{index() + 1}
-                      </div>
+                  <div class="message-item">
+                    <div class="message-header">
+                      <div class="message-title">{message.title}</div>
+                      <div class="message-index">#{index() + 1}</div>
+                    </div>
+                    <div class="message-short">{message.short}</div>
+                    <div class="message-meta">
+                      ID: {message.id} | 时间:{" "}
+                      {new Date(message.createdAt).toLocaleString()}
                     </div>
                     <Show when={message.tags && message.tags.length > 0}>
-                      <div class="mt-2 flex flex-wrap gap-1">
+                      <div class="message-tags">
                         <For each={message.tags}>
-                          {(tag) => (
-                            <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
-                              {tag}
-                            </span>
-                          )}
+                          {(tag) => <span class="tag">{tag}</span>}
                         </For>
                       </div>
                     </Show>
@@ -374,9 +344,9 @@ export default function PushTestPage() {
       </div>
 
       {/* 测试说明 */}
-      <div class="mt-8 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-        <h3 class="text-lg font-semibold text-yellow-800 mb-2">测试说明</h3>
-        <ul class="list-disc list-inside space-y-1 text-yellow-700">
+      <div class="instructions">
+        <h3>测试说明</h3>
+        <ul>
           <li>确保WebSocket状态显示为"connected"才能发送消息</li>
           <li>发送消息后，会在右侧实时消息列表中显示推送的消息</li>
           <li>同时会显示在页面的通知横幅中</li>

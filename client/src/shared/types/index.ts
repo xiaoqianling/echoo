@@ -28,6 +28,14 @@ export interface Organization {
   updatedAt: string;
 }
 
+export interface Member {
+  id: string;
+  name: string;
+  role: "owner" | "admin" | "member";
+  email: string;
+  joinedAt: string;
+}
+
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;

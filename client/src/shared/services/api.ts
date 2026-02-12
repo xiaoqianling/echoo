@@ -6,6 +6,7 @@ import {
   Organization,
   User,
   SendMessageForm,
+  Member,
 } from "../types";
 
 const API_BASE_URL =
@@ -153,7 +154,7 @@ class ApiService {
 
   // 消息相关API
   async sendMessage(messageData: SendMessageForm): Promise<Message> {
-    return this.request<Message>("/messages/send", {
+    return this.request<Message>("/echoo/messages/send", {
       method: "POST",
       body: JSON.stringify(messageData),
     });
@@ -161,24 +162,24 @@ class ApiService {
 
   async getMessages(organizationId?: string): Promise<Message[]> {
     const endpoint = organizationId
-      ? `/messages/list?organizationId=${organizationId}`
-      : "/messages/list";
+      ? `/echoo/messages/list?organizationId=${organizationId}`
+      : "/echoo/messages/list";
 
     return this.request<Message[]>(endpoint);
   }
 
   async getMessage(messageId: string): Promise<Message> {
-    return this.request<Message>(`/messages/${messageId}/detail`);
+    return this.request<Message>(`/echoo/messages/${messageId}/detail`);
   }
 
   // 组织相关API
   async getOrganizations(): Promise<Organization[]> {
-    return this.request<Organization[]>("/organizations/list");
+    return this.request<Organization[]>("/echoo/organizations/list");
   }
 
   async getOrganization(organizationId: string): Promise<Organization> {
     return this.request<Organization>(
-      `/organizations/${organizationId}/detail`
+      `/echoo/organizations/${organizationId}/detail`
     );
   }
 
@@ -186,14 +187,14 @@ class ApiService {
     name: string,
     description?: string
   ): Promise<Organization> {
-    return this.request<Organization>("/organizations/create", {
+    return this.request<Organization>("/echoo/organizations/create", {
       method: "POST",
       body: JSON.stringify({ name, description }),
     });
   }
 
   async joinOrganization(inviteCode: string): Promise<Organization> {
-    return this.request<Organization>("/organizations/join", {
+    return this.request<Organization>("/echoo/organizations/join", {
       method: "POST",
       body: JSON.stringify({ inviteCode }),
     });
@@ -205,15 +206,18 @@ class ApiService {
     userId: string,
     role: string
   ): Promise<void> {
-    return this.request<void>(`/organizations/${organizationId}/member/add`, {
-      method: "POST",
-      body: JSON.stringify({ userId, role }),
-    });
+    return this.request<void>(
+      `/echoo/organizations/${organizationId}/member/add`,
+      {
+        method: "POST",
+        body: JSON.stringify({ userId, role }),
+      }
+    );
   }
 
   async removeMember(organizationId: string, userId: string): Promise<void> {
     return this.request<void>(
-      `/organizations/${organizationId}/member/remove`,
+      `/echoo/organizations/${organizationId}/member/remove`,
       {
         method: "DELETE",
         body: JSON.stringify({ userId }),
@@ -223,7 +227,7 @@ class ApiService {
 
   async promoteMember(organizationId: string, userId: string): Promise<void> {
     return this.request<void>(
-      `/organizations/${organizationId}/member/promote`,
+      `/echoo/organizations/${organizationId}/member/promote`,
       {
         method: "POST",
         body: JSON.stringify({ userId }),
@@ -233,7 +237,7 @@ class ApiService {
 
   async demoteMember(organizationId: string, userId: string): Promise<void> {
     return this.request<void>(
-      `/organizations/${organizationId}/member/demote`,
+      `/echoo/organizations/${organizationId}/member/demote`,
       {
         method: "POST",
         body: JSON.stringify({ userId }),
@@ -242,9 +246,12 @@ class ApiService {
   }
 
   async leaveOrganization(organizationId: string): Promise<void> {
-    return this.request<void>(`/organizations/${organizationId}/member/leave`, {
-      method: "POST",
-    });
+    return this.request<void>(
+      `/echoo/organizations/${organizationId}/member/leave`,
+      {
+        method: "POST",
+      }
+    );
   }
 
   // 组织消息API
@@ -254,7 +261,7 @@ class ApiService {
     content: string
   ): Promise<void> {
     return this.request<void>(
-      `/organizations/${organizationId}/message/publish`,
+      `/echoo/organizations/${organizationId}/message/publish`,
       {
         method: "POST",
         body: JSON.stringify({ title, content }),
@@ -264,13 +271,13 @@ class ApiService {
 
   async getOrganizationMessages(organizationId: string): Promise<Message[]> {
     return this.request<Message[]>(
-      `/organizations/${organizationId}/message/list`
+      `/echoo/organizations/${organizationId}/message/list`
     );
   }
 
   async getOrganizationMembers(organizationId: string): Promise<Member[]> {
     return this.request<Member[]>(
-      `/organizations/${organizationId}/member/list`
+      `/echoo/organizations/${organizationId}/member/list`
     );
   }
 
@@ -280,7 +287,7 @@ class ApiService {
     newOwnerId: string
   ): Promise<void> {
     return this.request<void>(
-      `/organizations/${organizationId}/owner/transfer`,
+      `/echoo/organizations/${organizationId}/owner/transfer`,
       {
         method: "POST",
         body: JSON.stringify({ newOwnerId }),
@@ -289,7 +296,7 @@ class ApiService {
   }
 
   async deleteOrganization(organizationId: string): Promise<void> {
-    return this.request<void>(`/organizations/${organizationId}/delete`, {
+    return this.request<void>(`/echoo/organizations/${organizationId}/delete`, {
       method: "DELETE",
     });
   }
@@ -310,6 +317,22 @@ class ApiService {
       method: "PATCH",
       body: JSON.stringify({ oldPassword, newPassword }),
     });
+  }
+
+  // Stats
+  async getStats() {
+    const response = await fetch(`${API_BASE_URL}/echoo/stats`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch stats");
+    }
+
+    return response.json();
   }
 }
 

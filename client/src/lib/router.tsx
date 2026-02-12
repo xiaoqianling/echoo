@@ -8,6 +8,7 @@ import { SettingsPage } from "../apps/echoo/pages/SettingsPage";
 import { LoginPage } from "../apps/echoo/pages/LoginPage";
 import { RegisterPage } from "../apps/echoo/pages/RegisterPage";
 import OrganizationsPage from "../apps/echoo/pages/OrganizationsPage";
+import { LandingPage } from "../apps/echoo/pages/LandingPage";
 import { AuthGuard } from "../shared/components/AuthGuard";
 
 // 受保护的路由包装器
@@ -34,9 +35,14 @@ export const routes: RouteDefinition[] = [
         path: "echoo",
         component: EchooLayout,
         children: [
-          // 受保护的路由
+          // Landing Page (Public)
           {
             path: "",
+            component: LandingPage,
+          },
+          // Protected Routes
+          {
+            path: "dashboard",
             component: () => <ProtectedRoute component={DashboardPage} />,
           },
           {

@@ -1,0 +1,36 @@
+// d:\program\Projects\entertainment\JS\echoo\client\src\styles\_themes.scss
+@import "./variables";
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// Light Theme (Default)
+body[data-theme="light"] {
+  background-color: #fff; // Replaced $background-color
+  color: #333; // Replaced $text-color
+
+  a {
+    color: #4a90e2; // Replaced $primary-color
+  }
+}
+
+// Dark Theme
+body[data-theme="dark"] {
+  background-color: #1a1a1a; // Replaced $dark-background
+  color: #f0f0f0; // Replaced $dark-text
+
+  a {
+    color: #f5a623; // Replaced $secondary-color
+  }
+}
+
+// Aemeath Theme
+body[data-theme="aemeath"] {
+  background-color: #ffdce4; // Replaced $aemeath-primary
+  color: #5c3c42; // Replaced $aemeath-text
+
+  a {
+    color: #ffb3c1; // Replaced $aemeath-secondary
+  }
+}

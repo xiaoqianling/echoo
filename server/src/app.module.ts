@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
+import { RouterModule } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import configuration from './config/configuration';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { OrganizationsModule } from './organizations/organizations.module';
-import { MessagesModule } from './messages/messages.module';
-import { WebSocketModule } from './websocket/websocket.module';
+import configuration from './shared/config/configuration';
+import { AuthModule } from './modules/core/auth/auth.module';
+import { UsersModule } from './modules/core/users/users.module';
+import { OrganizationsModule } from './modules/echoo/organizations/organizations.module';
+import { MessagesModule } from './modules/echoo/messages/messages.module';
+import { WebSocketModule } from './modules/echoo/websocket/websocket.module';
+import { StatsModule } from './modules/echoo/stats/stats.module';
 
 @Module({
   imports: [
@@ -35,6 +37,17 @@ import { WebSocketModule } from './websocket/websocket.module';
     OrganizationsModule,
     MessagesModule,
     WebSocketModule,
+    StatsModule,
+    RouterModule.register([
+      {
+        path: 'echoo',
+        children: [
+          { path: '/', module: OrganizationsModule },
+          { path: '/', module: MessagesModule },
+          { path: '/', module: StatsModule },
+        ],
+      },
+    ]),
   ],
   controllers: [],
   providers: [],

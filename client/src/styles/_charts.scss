@@ -1,0 +1,42 @@
+@import "variables";
+@import "mixins";
+
+.chartjs-tooltip {
+  opacity: 1;
+  position: absolute;
+  pointer-events: none;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  transition: all 0.1s ease;
+  z-index: 100;
+
+  h3 {
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .tooltip-body {
+    margin-top: 0.25rem;
+    color: var(--text-secondary);
+  }
+
+  .tooltip-item {
+    display: flex;
+    align-items: center;
+
+    .color-box {
+      display: inline-block;
+      height: 0.5rem;
+      width: 0.5rem;
+      margin-right: 0.25rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  }
+}

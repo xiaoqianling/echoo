@@ -1,1058 +1,729 @@
-/* OrganizationsPage/styles.scss */
-@use "sass:color";
-// 导入变量 - 使用@use方式需要通过命名空间访问变量
-@import "@styles/variables.scss";
-
-// 定义圆角变量
-$radius-full: 9999px;
+@import "../../../../styles/variables";
+@import "../../../../styles/mixins";
 
 .organizations-page {
+  padding: 24px; // Replaced $spacing-lg
   max-width: 1200px;
   margin: 0 auto;
-}
+  width: 100%;
 
-.organizations-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-xl;
+  .organizations-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px; // Replaced $spacing-lg
 
-  // 响应式调整
-  @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-md;
-  }
-}
+    .organizations-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #333; // Replaced $text-color
 
-.organizations-title {
-  font-size: $font-size-2xl;
-  font-weight: bold;
-  color: $text-primary;
-  margin: 0;
-}
+      [data-theme="dark"] & {
+        color: #f0f0f0; // Replaced $dark-text
+      }
 
-.organizations-create-btn {
-  background-color: $primary-color;
-  color: white;
-  padding: $spacing-sm $spacing-md;
-  border: none;
-  border-radius: $radius-md;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    background-color: $primary-hover;
-    box-shadow: $shadow-md;
-    transform: translateY(-1px);
-  }
-
-  // 响应式调整
-  @media (max-width: 640px) {
-    width: 100%;
-  }
-}
-
-.organizations-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-xl;
-  height: calc(100vh - 120px);
-
-  // 详情展开状态
-  &.detail-open {
-    grid-template-columns: 2fr 1fr;
-
-    @media (max-width: 1024px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  // 响应式调整
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.organizations-list {
-  background-color: $bg-secondary;
-  border-radius: $radius-lg;
-  padding: $spacing-xl;
-  box-shadow: $shadow-md;
-  transition: all $transition-normal;
-  overflow: hidden;
-  position: relative;
-
-  &:hover {
-    box-shadow: $shadow-xl;
-    transform: translateY(-2px);
-  }
-
-  // 网格视图样式
-  &--grid {
-    overflow-y: auto;
-  }
-
-  // 列表视图样式（详情展开时）
-  &--list {
-    overflow-y: auto;
-    background-color: $bg-primary;
-    border: 1px solid $border-primary;
-
-    .organizations-subtitle {
-      font-size: $font-size-md;
-      margin-bottom: $spacing-md;
+      [data-theme="aemeath"] & {
+        color: #5c3c42; // Replaced $aemeath-text
+      }
     }
 
-    .organization-card {
-      border: 1px solid transparent;
-      padding: $spacing-md;
-      margin-bottom: $spacing-sm;
-      border-radius: $radius-md;
+    .organizations-create-btn {
+      background-color: #4a90e2; // Replaced $primary-color
+      color: white;
+      border: none;
+      padding: 8px 24px; // Replaced $spacing-sm $spacing-lg
+      border-radius: 4px; // Replaced $border-radius
+      font-weight: 600;
+      cursor: pointer;
+      @include transition(background-color, transform);
+      @include box-shadow(1);
 
       &:hover {
-        background-color: $bg-secondary;
-        transform: translateX(4px);
-        box-shadow: $shadow-sm;
+        background-color: #357abd; // Replaced darken($primary-color, 10%)
+        transform: translateY(-1px);
+        @include box-shadow(2);
+      }
+
+      [data-theme="aemeath"] & {
+        background-color: #ffb3c1; // Replaced $aemeath-secondary
+        color: #5c3c42; // Replaced $aemeath-text
+
+        &:hover {
+          background-color: #ff8fa3; // Replaced darken($aemeath-secondary, 10%)
+        }
+      }
+    }
+  }
+
+  .organizations-subtitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 16px; // Replaced $spacing-md
+    color: #333; // Replaced $text-color
+
+    [data-theme="dark"] & {
+      color: #f0f0f0; // Replaced $dark-text
+    }
+
+    [data-theme="aemeath"] & {
+      color: #5c3c42; // Replaced $aemeath-text
+    }
+  }
+
+  // List Views
+  .organizations-list--grid {
+    .organizations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px; // Replaced $spacing-lg
+    }
+  }
+
+  .organizations-list--list {
+    .organizations-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px; // Replaced $spacing-md
+    }
+  }
+
+  // Component: OrganizationCard
+  .organization-card {
+    background-color: #fff; // Replaced $background-color
+    border: 1px solid #ddd; // Replaced $border-color
+    border-radius: 8px; // Replaced $border-radius * 2
+    padding: 24px; // Replaced $spacing-lg
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out,
+      border-color 0.3s ease-in-out, background-color 0.3s ease-in-out; // Explicit transition
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); // @include box-shadow(1)
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); // @include box-shadow(2)
+      border-color: #4a90e2; // Replaced $primary-color
+    }
+
+    &.active {
+      border-color: #4a90e2; // Replaced $primary-color
+      background-color: rgba(74, 144, 226, 0.05); // Replaced $primary-color
+    }
+
+    [data-theme="dark"] & {
+      background-color: #262626; // Replaced lighten($dark-background, 5%)
+      border-color: #444; // Replaced $dark-border
+
+      &:hover {
+        border-color: #f5a623; // Replaced $secondary-color
       }
 
       &.active {
-        background-color: rgba($primary-color, 0.1);
-        border-color: $primary-color;
-        box-shadow: $shadow-sm;
+        border-color: #f5a623; // Replaced $secondary-color
+        background-color: rgba(245, 166, 35, 0.1); // Replaced $secondary-color
+      }
+    }
+
+    [data-theme="aemeath"] & {
+      background-color: rgba(255, 255, 255, 0.5);
+      border-color: rgba(255, 179, 193, 0.5); // Replaced $aemeath-secondary
+
+      &:hover {
+        border-color: #ffb3c1; // Replaced $aemeath-secondary
+        background-color: rgba(255, 255, 255, 0.8);
       }
 
-      &-header {
-        margin-bottom: $spacing-xs;
+      &.active {
+        border-color: #ffb3c1; // Replaced $aemeath-secondary
+        background-color: rgba(
+          255,
+          179,
+          193,
+          0.2
+        ); // Replaced $aemeath-secondary
+      }
+    }
+
+    .organization-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px; // Replaced $spacing-sm
+
+      .organization-card-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+        color: #333; // Replaced $text-color
+
+        [data-theme="dark"] & {
+          color: #f0f0f0; // Replaced $dark-text
+        }
       }
 
-      &-name {
-        font-size: $font-size-base;
+      .organization-card-role {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        border-radius: 12px;
+        background-color: rgba(
+          119,
+          119,
+          119,
+          0.1
+        ); // Replaced $text-color-light
+        color: #777; // Replaced $text-color-light
       }
+    }
 
-      &-description {
-        display: none;
+    .organization-card-description {
+      color: #777; // Replaced $text-color-light
+      font-size: 0.9rem;
+      margin-bottom: 16px; // Replaced $spacing-md
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+
+      [data-theme="dark"] & {
+        color: rgba(240, 240, 240, 0.7); // Replaced $dark-text
       }
+    }
 
-      &-footer {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+    .organization-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
 
-        .organization-card-meta {
-          flex-direction: row;
-          gap: $spacing-md;
+    .organization-card-meta {
+      display: flex;
+      gap: 16px; // Replaced $spacing-md
+      font-size: 0.8rem;
+      color: #777; // Replaced $text-color-light
+
+      [data-theme="dark"] & {
+        color: rgba(240, 240, 240, 0.5); // Replaced $dark-text
+      }
+    }
+
+    .organization-card-actions {
+      display: flex;
+      gap: 8px; // Replaced $spacing-sm
+
+      button {
+        padding: 4px 12px;
+        border-radius: 4px; // Replaced $border-radius
+        font-size: 0.8rem;
+        cursor: pointer;
+        border: 1px solid transparent;
+        @include transition(background-color, color);
+
+        &.organization-card-view-btn {
+          background-color: transparent;
+          color: #4a90e2; // Replaced $primary-color
+          border-color: #4a90e2; // Replaced $primary-color
+
+          &:hover {
+            background-color: #4a90e2; // Replaced $primary-color
+            color: white;
+          }
         }
 
-        .organization-card-actions {
-          display: none;
+        &.organization-card-delete-btn {
+          background-color: transparent;
+          color: #e74c3c; // Error color
+          border-color: #e74c3c;
+
+          &:hover {
+            background-color: #e74c3c;
+            color: white;
+          }
         }
       }
     }
   }
-}
 
-.organizations-subtitle {
-  font-size: $font-size-xl;
-  font-weight: 700;
-  color: $text-primary;
-  margin-bottom: $spacing-xl;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
+  // Detail View
+  .organization-detail {
+    background-color: #fff; // Replaced $background-color
+    border-radius: 8px; // Replaced $border-radius * 2
+    padding: 24px; // Replaced $spacing-lg
+    margin-bottom: 32px; // Replaced $spacing-xl
+    @include box-shadow(2);
+    animation: slideDown 0.3s ease-out;
 
-.organizations-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: $spacing-2xl;
-  transition: all $transition-normal;
+    [data-theme="dark"] & {
+      background-color: #262626; // Replaced lighten($dark-background, 5%)
+    }
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: $spacing-xl;
+    [data-theme="aemeath"] & {
+      background-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .organization-detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px; // Replaced $spacing-lg
+      padding-bottom: 24px; // Replaced $spacing-lg
+      border-bottom: 1px solid #ddd; // Replaced $border-color
+
+      [data-theme="dark"] & {
+        border-bottom-color: #444; // Replaced $dark-border
+      }
+    }
+
+    .organization-detail-name {
+      font-size: 2rem;
+      margin-bottom: 4px; // Replaced $spacing-xs
+    }
+
+    .organization-detail-description {
+      color: #777; // Replaced $text-color-light
+      margin-bottom: 16px; // Replaced $spacing-md
+    }
+
+    .organization-detail-meta {
+      display: flex;
+      gap: 24px; // Replaced $spacing-lg
+      font-size: 0.9rem;
+      color: #777; // Replaced $text-color-light
+    }
+
+    .organization-detail-actions {
+      display: flex;
+      gap: 16px; // Replaced $spacing-md
+
+      button {
+        padding: 8px 16px; // Replaced $spacing-sm $spacing-md
+        border-radius: 4px; // Replaced $border-radius
+        cursor: pointer;
+        font-weight: 500;
+        border: none;
+        @include transition(opacity);
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        &.organization-detail-back-btn {
+          background-color: rgba(51, 51, 51, 0.1); // Replaced $text-color
+          color: #333; // Replaced $text-color
+        }
+
+        &.organization-detail-delete-btn {
+          background-color: #e74c3c;
+          color: white;
+        }
+      }
+    }
+
+    .organization-tabs {
+      display: flex;
+      gap: 16px; // Replaced $spacing-md
+      margin-bottom: 24px; // Replaced $spacing-lg
+      border-bottom: 1px solid #ddd; // Replaced $border-color
+
+      .organization-tab {
+        padding: 8px 24px; // Replaced $spacing-sm $spacing-lg
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        font-weight: 500;
+        color: #777; // Replaced $text-color-light
+        @include transition(color, border-color);
+
+        &:hover {
+          color: #4a90e2; // Replaced $primary-color
+        }
+
+        &.active {
+          color: #4a90e2; // Replaced $primary-color
+          border-bottom-color: #4a90e2; // Replaced $primary-color
+        }
+      }
+    }
+
+    // Tab Contents
+    .members-list,
+    .messages-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px; // Replaced $spacing-md
+    }
   }
-}
 
-// 列表视图布局
-.organizations-list {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
+  // Component: MemberItem
+  .member-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px; // Replaced $spacing-md
+    background-color: rgba(255, 255, 255, 0.5); // Replaced $background-color
+    border: 1px solid #ddd; // Replaced $border-color
+    border-radius: 4px; // Replaced $border-radius
+    @include transition(background-color);
 
-// 添加页面缩放动画
-.organizations-content {
-  animation: pageScale $transition-slow ease-out;
-}
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.8); // Replaced $background-color
+    }
 
-@keyframes pageScale {
-  from {
-    opacity: 0;
-    transform: scale(0.98);
+    [data-theme="dark"] & {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: #444; // Replaced $dark-border
+    }
+
+    .member-info {
+      .member-name {
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+      .member-email {
+        font-size: 0.9rem;
+        color: #777; // Replaced $text-color-light
+      }
+      .member-joined {
+        font-size: 0.8rem;
+        color: #777; // Replaced $text-color-light
+        margin-top: 4px;
+      }
+    }
+
+    .member-role {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      background-color: rgba(74, 144, 226, 0.1); // Replaced $primary-color
+      color: #4a90e2; // Replaced $primary-color
+    }
+
+    .member-actions {
+      .member-action-btn {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+        color: #e74c3c;
+        background: none;
+        border: 1px solid #e74c3c;
+        border-radius: 4px; // Replaced $border-radius
+        cursor: pointer;
+
+        &:hover {
+          background-color: #e74c3c;
+          color: white;
+        }
+      }
+    }
   }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 
-// 详情展开动画
-.organizations-content.detail-open {
-  animation: detailOpen $transition-normal ease-out;
-}
+  // Component: MessageItem
+  .message-item {
+    padding: 16px; // Replaced $spacing-md
+    border: 1px solid #ddd; // Replaced $border-color
+    border-radius: 4px; // Replaced $border-radius
+    background-color: #fff; // Replaced $background-color
 
-@keyframes detailOpen {
-  from {
-    opacity: 0.9;
-    transform: scale(0.99);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+    [data-theme="dark"] & {
+      background-color: #262626; // Replaced lighten($dark-background, 5%)
+      border-color: #444; // Replaced $dark-border
+    }
 
-// 卡片切换动画
-.organization-card {
-  animation: cardSlideIn $transition-normal ease-out;
+    .message-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 4px; // Replaced $spacing-xs
+    }
 
-  &.active {
-    animation: cardPulse $transition-normal ease-out;
-  }
-}
+    .message-meta {
+      display: flex;
+      gap: 16px; // Replaced $spacing-md
+      font-size: 0.85rem;
+      color: #777; // Replaced $text-color-light
+      margin-bottom: 16px; // Replaced $spacing-md
+    }
 
-@keyframes cardPulse {
-  0% {
-    transform: scale(1);
+    .message-content {
+      line-height: 1.5;
+    }
   }
-  50% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
 
-// 详情面板进入动画
-.organization-detail {
-  animation: detailSlideIn $transition-normal ease-out;
-}
+  // Component: Publish Section
+  .publish-section {
+    padding: 24px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.3s ease-in-out;
 
-@keyframes detailSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
+    [data-theme="dark"] & {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: #444;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: #333;
+
+      [data-theme="dark"] & {
+        color: #f0f0f0;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+
+        [data-theme="dark"] & {
+          color: #ccc;
+        }
+      }
+
+      .form-input,
+      .form-textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #4a90e2;
+          box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+
+        [data-theme="dark"] & {
+          background-color: #333;
+          border-color: #555;
+          color: #f0f0f0;
+
+          &:focus {
+            border-color: #4a90e2;
+          }
+        }
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+
+      .publish-btn {
+        padding: 10px 24px;
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+
+        &:hover {
+          background-color: #357abd;
+          transform: translateY(-1px);
+        }
+
+        &:disabled {
+          background-color: #ccc;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        [data-theme="aemeath"] & {
+          background-color: #ffb3c1;
+          color: #5c3c42;
+
+          &:hover {
+            background-color: #ff8fa3;
+          }
+        }
+      }
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
 
-// 右侧列表进入动画
-.organizations-list--list {
-  animation: listSlideIn $transition-normal ease-out;
-}
-
-@keyframes listSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.organization-card {
-  background-color: $bg-primary;
-  border: 2px solid $border-primary;
-  border-radius: $radius-xl;
-  padding: $spacing-xl;
-  transition: all $transition-normal;
-  box-shadow: $shadow-md;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-
-  // 渐变背景效果
-  &::before {
-    content: "";
-    position: absolute;
+  // Component: CreateOrganizationModal (and generic modal styles)
+  .modal-backdrop {
+    position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, $primary-color, $info-color);
-    transform: scaleX(0);
-    transition: transform $transition-normal;
-    transform-origin: left;
-  }
-
-  &:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: $shadow-2xl;
-    border-color: $primary-color;
-
-    &::before {
-      transform: scaleX(1);
-    }
-
-    .organization-card-name {
-      color: $primary-color;
-    }
-  }
-
-  &.active {
-    border-color: $primary-color;
-    box-shadow: $shadow-xl;
-    background-color: rgba($primary-color, 0.05);
-
-    &::before {
-      transform: scaleX(1);
-    }
-  }
-
-  // 缩放动画（进入/退出）
-  animation: cardSlideIn $transition-normal ease-out;
-
-  @keyframes cardSlideIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-}
-
-.organization-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-sm;
-}
-
-.organization-card-name {
-  font-size: $font-size-lg;
-  font-weight: 600;
-  color: $text-primary;
-  margin: 0;
-}
-
-.organization-card-role {
-  background-color: $primary-color;
-  color: white;
-  font-size: $font-size-xs;
-  font-weight: 600;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $radius-full;
-}
-
-.organization-card-description {
-  color: $text-secondary;
-  margin-bottom: $spacing-md;
-  font-size: $font-size-sm;
-  line-height: $line-height-relaxed;
-}
-
-.organization-card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.organization-card-meta {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
-}
-
-.organization-card-meta span {
-  color: $text-tertiary;
-  font-size: $font-size-xs;
-}
-
-.organization-card-actions {
-  display: flex;
-  gap: $spacing-sm;
-}
-
-.organization-card-view-btn {
-  background-color: $primary-color;
-  color: white;
-  padding: $spacing-xs $spacing-sm;
-  border: none;
-  border-radius: $radius-md;
-  font-size: $font-size-xs;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    background-color: $primary-hover;
-    box-shadow: $shadow-md;
-  }
-}
-
-.organization-card-delete-btn {
-  background-color: $danger-color;
-  color: white;
-  padding: $spacing-xs $spacing-sm;
-  border: none;
-  border-radius: $radius-md;
-  font-size: $font-size-xs;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    background-color: color.adjust($danger-color, $lightness: -10%);
-    box-shadow: $shadow-md;
-  }
-}
-
-.organization-detail {
-  background-color: $bg-primary;
-  border: 1px solid $border-primary;
-  border-radius: $radius-lg;
-  padding: $spacing-xl;
-  box-shadow: $shadow-md;
-  transition: all $transition-normal;
-
-  &:hover {
-    box-shadow: $shadow-lg;
-  }
-}
-
-.organization-detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: $spacing-xl;
-
-  // 响应式调整
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-md;
-  }
-}
-
-.organization-detail-info {
-  flex: 1;
-}
-
-.organization-detail-name {
-  font-size: $font-size-xl;
-  font-weight: bold;
-  color: $text-primary;
-  margin: 0 0 $spacing-sm 0;
-}
-
-.organization-detail-description {
-  color: $text-secondary;
-  margin-bottom: $spacing-md;
-  font-size: $font-size-sm;
-  line-height: $line-height-relaxed;
-}
-
-.organization-detail-meta {
-  display: flex;
-  gap: $spacing-lg;
-  font-size: $font-size-sm;
-  color: $text-secondary;
-}
-
-.organization-detail-member-count {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-}
-
-.organization-detail-role {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-  font-weight: 600;
-}
-
-.organization-detail-actions {
-  display: flex;
-  gap: $spacing-sm;
-
-  // 响应式调整
-  @media (max-width: 768px) {
     width: 100%;
-    justify-content: flex-start;
-  }
-}
-
-.organization-detail-back-btn {
-  background-color: $bg-tertiary;
-  color: $text-primary;
-  padding: $spacing-sm $spacing-md;
-  border: 1px solid $border-primary;
-  border-radius: $radius-md;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    background-color: $bg-secondary;
-    box-shadow: $shadow-md;
-  }
-}
-
-.organization-detail-delete-btn {
-  background-color: $danger-color;
-  color: white;
-  padding: $spacing-sm $spacing-md;
-  border: none;
-  border-radius: $radius-md;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    background-color: color.adjust($danger-color, $lightness: -10%);
-    box-shadow: $shadow-md;
-    transform: translateY(-1px);
-  }
-}
-
-.organization-tabs {
-  display: flex;
-  gap: $spacing-md;
-  border-bottom: 2px solid $border-primary;
-  margin-bottom: $spacing-xl;
-
-  // 响应式调整
-  @media (max-width: 768px) {
-    flex-wrap: wrap;
-  }
-}
-
-.organization-tab {
-  background-color: transparent;
-  color: $text-secondary;
-  padding: $spacing-sm $spacing-lg;
-  border: none;
-  border-bottom: 2px solid transparent;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-normal;
-  font-size: $font-size-sm;
-
-  &:hover {
-    color: $text-primary;
-    border-bottom-color: $border-secondary;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
   }
 
-  &.active {
-    color: $primary-color;
-    border-bottom-color: $primary-color;
-    background-color: rgba($primary-color, 0.05);
-    border-radius: $radius-md $radius-md 0 0;
-  }
-
-  // 响应式调整
-  @media (max-width: 768px) {
-    flex: 1;
-    min-width: 100px;
-    text-align: center;
-  }
-}
-
-.organization-tab-content {
-  background-color: $bg-secondary;
-  border-radius: $radius-lg;
-  padding: $spacing-lg;
-  box-shadow: $shadow-sm;
-  transition: all $transition-normal;
-
-  &:hover {
-    box-shadow: $shadow-md;
-  }
-}
-
-.members-section h3,
-.messages-section h3,
-.publish-section h3 {
-  font-size: $font-size-lg;
-  font-weight: 600;
-  color: $text-primary;
-  margin: 0 0 $spacing-lg 0;
-}
-
-.members-list {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-.member-item {
-  background-color: $bg-primary;
-  padding: $spacing-md;
-  border-radius: $radius-lg;
-  border: 1px solid $border-primary;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    box-shadow: $shadow-md;
-    transform: translateY(-1px);
-    border-color: $primary-color;
-  }
-
-  // 响应式调整
-  @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-sm;
-  }
-}
-
-.member-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.member-name {
-  font-weight: 600;
-  color: $text-primary;
-  font-size: $font-size-sm;
-}
-
-.member-email {
-  color: $text-secondary;
-  font-size: $font-size-xs;
-}
-
-.member-role {
-  background-color: $primary-color;
-  color: white;
-  font-size: $font-size-xs;
-  font-weight: 600;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $radius-full;
-  margin-right: $spacing-md;
-
-  // 响应式调整
-  @media (max-width: 640px) {
-    margin-right: 0;
-    margin-bottom: $spacing-sm;
-  }
-}
-
-.member-actions {
-  display: flex;
-  gap: $spacing-sm;
-
-  // 响应式调整
-  @media (max-width: 640px) {
+  .modal-container {
+    background-color: #fff; // Replaced $background-color
+    border-radius: 8px; // Replaced $border-radius * 2
     width: 100%;
-    justify-content: flex-start;
+    max-width: 500px;
+    padding: 24px; // Replaced $spacing-lg
+    @include box-shadow(3);
+    animation: scaleUp 0.3s ease-out;
+
+    [data-theme="dark"] & {
+      background-color: #1a1a1a; // Replaced $dark-background
+      border: 1px solid #444; // Replaced $dark-border
+    }
+
+    [data-theme="aemeath"] & {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px; // Replaced $spacing-lg
+
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .modal-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #777; // Replaced $text-color-light
+
+        &:hover {
+          color: #333; // Replaced $text-color
+        }
+      }
+    }
+
+    .form-group {
+      margin-bottom: 16px; // Replaced $spacing-md
+
+      .form-label {
+        display: block;
+        margin-bottom: 4px; // Replaced $spacing-xs
+        font-weight: 500;
+      }
+
+      .form-input,
+      .form-textarea {
+        width: 100%;
+        padding: 8px; // Replaced $spacing-sm
+        border: 1px solid #ddd; // Replaced $border-color
+        border-radius: 4px; // Replaced $border-radius
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.5
+        ); // Replaced $background-color
+        color: #333; // Replaced $text-color
+        font-family: inherit;
+        @include transition(border-color, box-shadow);
+
+        &:focus {
+          outline: none;
+          border-color: #4a90e2; // Replaced $primary-color
+          box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2); // Replaced $primary-color
+        }
+
+        [data-theme="dark"] & {
+          background-color: rgba(0, 0, 0, 0.2);
+          border-color: #444; // Replaced $dark-border
+          color: #f0f0f0; // Replaced $dark-text
+        }
+      }
+
+      .form-error-message {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        margin-top: 4px;
+        display: block;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px; // Replaced $spacing-md
+      margin-top: 24px; // Replaced $spacing-lg
+
+      button {
+        padding: 8px 24px; // Replaced $spacing-sm $spacing-lg
+        border-radius: 4px; // Replaced $border-radius
+        cursor: pointer;
+        font-weight: 500;
+        border: none;
+
+        &.modal-cancel-btn {
+          background-color: rgba(51, 51, 51, 0.1); // Replaced $text-color
+          color: #333; // Replaced $text-color
+
+          &:hover {
+            background-color: rgba(51, 51, 51, 0.2); // Replaced $text-color
+          }
+        }
+
+        &.modal-submit-btn,
+        &.publish-btn {
+          background-color: #4a90e2; // Replaced $primary-color
+          color: white;
+
+          &:hover {
+            background-color: #357abd; // Replaced darken($primary-color, 10%)
+          }
+
+          &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
   }
 }
 
-.member-action-btn {
-  background-color: $bg-tertiary;
-  color: $text-primary;
-  padding: $spacing-xs $spacing-sm;
-  border: 1px solid $border-primary;
-  border-radius: $radius-md;
-  font-size: $font-size-xs;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    background-color: $bg-secondary;
-    color: $text-primary;
-    box-shadow: $shadow-md;
-    border-color: $primary-color;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
-}
-
-.messages-list {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-.message-item {
-  background-color: $bg-primary;
-  padding: $spacing-md;
-  border-radius: $radius-lg;
-  border: 1px solid $border-primary;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    box-shadow: $shadow-md;
-    transform: translateY(-1px);
-    border-color: $primary-color;
-  }
-}
-
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: $spacing-sm;
-
-  // 响应式调整
-  @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-xs;
-  }
-}
-
-.message-title {
-  font-weight: 600;
-  color: $text-primary;
-  font-size: $font-size-sm;
-  margin: 0;
-}
-
-.message-meta {
-  display: flex;
-  gap: $spacing-md;
-  font-size: $font-size-xs;
-  color: $text-tertiary;
-
-  // 响应式调整
-  @media (max-width: 640px) {
-    justify-content: flex-start;
-  }
-}
-
-.message-content {
-  color: $text-secondary;
-  font-size: $font-size-sm;
-  line-height: $line-height-relaxed;
-  margin: 0;
-}
-
-.publish-section {
-  background-color: $bg-primary;
-  padding: $spacing-lg;
-  border-radius: $radius-lg;
-  border: 1px solid $border-primary;
-  box-shadow: $shadow-sm;
-  transition: all $transition-normal;
-
-  &:hover {
-    box-shadow: $shadow-md;
-  }
-}
-
-.publish-form {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-}
-
-.form-label {
-  font-weight: 600;
-  color: $text-primary;
-  font-size: $font-size-sm;
-}
-
-.form-input,
-.form-textarea {
-  padding: $spacing-sm;
-  border: 2px solid $border-primary;
-  border-radius: $radius-md;
-  font-size: $font-size-sm;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
-  }
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 100px;
-  line-height: $line-height-relaxed;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: $spacing-sm;
-}
-
-.publish-btn {
-  background-color: $primary-color;
-  color: white;
-  padding: $spacing-sm $spacing-lg;
-  border: none;
-  border-radius: $radius-md;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    background-color: $primary-hover;
-    box-shadow: $shadow-md;
-    transform: translateY(-1px);
-  }
-
-  &:active {
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
 
-// 按钮基础样式增强
-button {
-  transition: all $transition-normal;
-  font-family: inherit;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-
-    &:hover {
-      transform: none;
-      box-shadow: none;
-    }
-  }
-}
-
-// 模态框样式
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn $transition-normal ease-out;
-}
-
-.modal-container {
-  background-color: $bg-primary;
-  border-radius: $radius-xl;
-  box-shadow: $shadow-2xl;
-  width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: slideIn $transition-normal ease-out;
-  position: relative;
-}
-
-@keyframes fadeIn {
+@keyframes scaleUp {
   from {
     opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-xl;
-  border-bottom: 1px solid $border-primary;
-}
-
-.modal-title {
-  font-size: $font-size-xl;
-  font-weight: 600;
-  margin: 0;
-  color: $text-primary;
-}
-
-.modal-close-btn {
-  background: none;
-  border: none;
-  font-size: $font-size-2xl;
-  color: $text-secondary;
-  cursor: pointer;
-  padding: $spacing-xs;
-  border-radius: $radius-md;
-  transition: all $transition-normal;
-  line-height: 1;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    background-color: $bg-secondary;
-    color: $text-primary;
-  }
-
-  &:active {
     transform: scale(0.95);
   }
-}
-
-.modal-body {
-  padding: $spacing-xl;
-}
-
-// 表单样式增强
-.form-group {
-  margin-bottom: $spacing-xl;
-
-  &:last-of-type {
-    margin-bottom: $spacing-2xl;
-  }
-}
-
-.form-label {
-  display: block;
-  margin-bottom: $spacing-sm;
-  font-weight: 600;
-  color: $text-primary;
-  font-size: $font-size-sm;
-}
-
-.form-input,
-.form-textarea {
-  width: 100%;
-  padding: $spacing-sm $spacing-md;
-  border: 2px solid $border-primary;
-  border-radius: $radius-md;
-  font-size: $font-size-base;
-  color: $text-primary;
-  background-color: $bg-primary;
-  transition: all $transition-normal;
-  font-family: inherit;
-
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
-  }
-
-  &:disabled {
-    background-color: $bg-tertiary;
-    border-color: $border-secondary;
-    color: $text-tertiary;
-    cursor: not-allowed;
-  }
-
-  &--error {
-    border-color: $danger-color;
-
-    &:focus {
-      border-color: $danger-color;
-      box-shadow: 0 0 0 3px rgba($danger-color, 0.1);
-    }
-  }
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 100px;
-  line-height: $line-height-relaxed;
-}
-
-.form-error-message {
-  display: block;
-  margin-top: $spacing-xs;
-  color: $danger-color;
-  font-size: $font-size-xs;
-  font-weight: 500;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: $spacing-md;
-  margin-top: $spacing-2xl;
-}
-
-.modal-cancel-btn {
-  background-color: $bg-tertiary;
-  color: $text-primary;
-  padding: $spacing-sm $spacing-xl;
-  border: 1px solid $border-primary;
-  border-radius: $radius-md;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    background-color: $bg-secondary;
-    box-shadow: $shadow-md;
-  }
-
-  &:active {
-    transform: translateY(1px);
-    box-shadow: $shadow-sm;
-  }
-}
-
-.modal-submit-btn {
-  background-color: $primary-color;
-  color: white;
-  padding: $spacing-sm $spacing-xl;
-  border: none;
-  border-radius: $radius-md;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-normal;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    background-color: $primary-hover;
-    box-shadow: $shadow-md;
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(1px);
-    box-shadow: $shadow-sm;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

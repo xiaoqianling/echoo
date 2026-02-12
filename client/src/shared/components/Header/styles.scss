@@ -1,109 +1,145 @@
-/* Header/styles.scss */
-@import '@styles/variables.scss';
-
 .header {
-  background-color: $bg-primary;
-  box-shadow: $shadow-md; // 使用变量阴影，增强层次感
-  border-bottom: 1px solid $border-primary;
-  padding: $spacing-md $spacing-lg;
-  border-radius: $radius-lg $radius-lg 0 0; // 顶部圆角，与Layout-main配合
-  transition: all $transition-normal; // 增加过渡效果，提升交互体验
-  
-  // 响应式调整
-  @media (max-width: 768px) {
-    padding: $spacing-sm $spacing-md;
+  background-color: rgba(255, 255, 255, 0.8); // $background-color
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #ddd; // $border-color
+  padding: 8px 24px; // $spacing-sm $spacing-lg
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out; // @include transition
+
+  [data-theme="dark"] & {
+    background-color: rgba(26, 26, 26, 0.8); // $dark-background
+    border-bottom-color: #444; // $dark-border
   }
 
-  &-container {
+  [data-theme="aemeath"] & {
+    background-color: rgba(255, 220, 228, 0.8); // $aemeath-primary
+    border-bottom-color: #ffb3c1; // darken($aemeath-primary, 10%) approx
+  }
+
+  .header-container {
+    width: 100%; // Full width
+    padding: 0; // Remove extra padding if container has it, padding is on .header
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-direction: row;
   }
 
-  &-brand {
+  .header-brand {
     display: flex;
     align-items: center;
-    gap: 1rem;
-  }
+    width: 260px; // Match sidebar width
+    // With header on top, we don't need negative margins anymore as it spans full width
+    // Just ensure the content aligns nicely
 
-  &-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0;
-  }
-
-  &-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  &-user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  &-notification-btn {
-    position: relative;
-    color: #6b7280;
-    cursor: pointer;
-    transition: color 0.2s ease-in-out;
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-
-    &:hover {
-      color: #3b82f6;
-      background-color: #f3f4f6;
-    }
-
-    &-icon {
-      width: 1.25rem;
-      height: 1.25rem;
-    }
-
-    &-badge {
-      position: absolute;
-      top: -0.25rem;
-      right: -0.25rem;
-      background-color: #ef4444;
-      color: white;
-      font-size: 0.75rem;
-      border-radius: 50%;
-      width: 1.25rem;
-      height: 1.25rem;
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #4a90e2; // $primary-color
+      letter-spacing: -0.5px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-weight: 600;
+      gap: 8px;
+
+      [data-theme="aemeath"] & {
+        color: #5c3c42; // $aemeath-text
+      }
     }
   }
 
-  &-username {
-    color: #4b5563;
-    font-size: 0.875rem;
+  .header-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 16px; // $spacing-md
   }
 
-  &-logout-btn {
-    font-size: 0.875rem;
-    color: #6b7280;
+  .header-user-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 16px; // $spacing-md
+  }
+
+  .header-btn {
     background: none;
     border: none;
     cursor: pointer;
-    transition: color 0.2s ease-in-out;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
+    padding: 4px; // $spacing-xs
+    border-radius: 50%;
+    color: #333; // $text-color
+    position: relative;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out,
+      transform 0.3s ease-in-out;
 
     &:hover {
-      color: #ef4444;
-      background-color: #fef2f2;
+      background-color: rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px);
+    }
+
+    [data-theme="dark"] & {
+      color: #f0f0f0; // $dark-text
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    [data-theme="aemeath"] & {
+      color: #5c3c42; // $aemeath-text
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    &.logout-btn {
+      font-size: 0.875rem; // $font-size-small
+      font-weight: 600;
+      padding: 4px 8px; // $spacing-xs $spacing-sm
+      border-radius: 4px; // $border-radius
+
+      &:hover {
+        background-color: rgba(189, 16, 224, 0.1); // $accent-color
+        color: #bd10e0; // $accent-color
+      }
     }
   }
 
-  &-loading {
-    color: #6b7280;
-    font-size: 0.875rem;
+  .badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background-color: #bd10e0; // $accent-color
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 4px;
+  }
+
+  .username {
+    font-weight: 500;
+    font-size: 0.875rem; // $font-size-small
+
+    [data-theme="dark"] & {
+      color: #f0f0f0; // $dark-text
+    }
+
+    [data-theme="aemeath"] & {
+      color: #5c3c42; // $aemeath-text
+    }
   }
 }

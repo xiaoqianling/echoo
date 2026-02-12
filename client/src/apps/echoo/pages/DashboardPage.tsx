@@ -1,415 +1,429 @@
-import { For, onMount, createMemo } from "solid-js";
+import { For, onMount, createMemo, createSignal, Show } from "solid-js";
 import { messagesStore, fetchMessages } from "@stores/messagesStore";
 import { authStore } from "@stores/authStore";
 import { Message } from "@types";
 import { LineChart, DonutChart, BarChart } from "@/~/components/ui/charts";
-import { unwrap } from "solid-js/store";
+import { useVimShortcuts } from "../hooks/useVimShortcuts";
+import { toast } from "@stores/toast";
+import "./dashboard.scss";
+
+type TimeRange = "7d" | "30d" | "all";
 
 export const DashboardPage = () => {
-  // 组件挂载时获取消息列表
+  const [timeRange, setTimeRange] = createSignal<TimeRange>("7d");
+
   onMount(() => {
     fetchMessages();
   });
 
-  // 按天统计消息数量
-  const messagesByDay = createMemo(() => {
-    const counts: Record<string, number> = {};
+  const recentMessages = createMemo(() => messagesStore.messages.slice(0, 8));
+
+  const { selectedIndex } = useVimShortcuts({
+    itemsLength: () => recentMessages().length,
+    onEnter: (index) => {
+      const msg = recentMessages()[index];
+      toast.info(`Selected: ${msg.title}`);
+    },
+    onDelete: (index) => {
+      const msg = recentMessages()[index];
+      toast.error(`Cannot delete from dashboard: ${msg.title}`);
+    },
+  });
+
+  // 过滤后的消息列表
+  const filteredMessages = createMemo(() => {
     const messages = messagesStore.messages;
+    const range = timeRange();
 
-    // 获取最近7天的日期
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      return date.toISOString().split("T")[0];
-    }).reverse();
+    if (range === "all") return messages;
 
-    // 初始化计数为0
-    last7Days.forEach((day) => {
-      counts[day.toString()] = 0;
-    });
+    const now = new Date();
+    const days = range === "7d" ? 7 : 30;
+    const cutoffDate = new Date(now.setDate(now.getDate() - days));
 
-    // 统计每天的消息数量
-    messages.forEach((msg) => {
-      const msgDate = new Date(msg.createdAt).toISOString().split("T")[0];
-      if (counts[msgDate] !== undefined) {
-        counts[msgDate]++;
-      }
-    });
+    return messages.filter((msg) => new Date(msg.createdAt) >= cutoffDate);
+  });
 
-    console.log(
-      "🚀 Chill ~ DashboardPage ~ counts: !!!",
-      counts,
-      unwrap(messages)
-    );
+  // 统计数据
+  const stats = createMemo(() => {
+    const messages = filteredMessages();
+    const totalMessages = messages.length;
+    const uniqueSenders = new Set(messages.map((m) => m.sender.id)).size;
+    const uniqueOrgs = new Set(
+      messages.filter((m) => m.organization).map((m) => m.organization!.id)
+    ).size;
+
     return {
-      labels: last7Days,
-      values: last7Days.map((day) => {
-        return counts[day];
-      }),
+      totalMessages,
+      uniqueSenders,
+      uniqueOrgs,
     };
   });
 
-  // 按标签统计消息数量
-  const messagesByTag = createMemo(() => {
-    const tagCounts: Record<string, number> = {};
+  // 图表颜色配置
+  const chartColors = {
+    primary: ["#4f46e5", "#7c3aed", "#2563eb", "#3b82f6", "#60a5fa"],
+    secondary: ["#ec4899", "#d946ef", "#a855f7", "#8b5cf6", "#6366f1"],
+    mixed: ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#6366f1"],
+  };
 
-    messagesStore.messages.forEach((msg) => {
+  // 趋势图数据
+  const trendData = createMemo(() => {
+    const messages = filteredMessages();
+    const range = timeRange();
+    const days = range === "7d" ? 7 : range === "30d" ? 30 : 14; // Default to 14 for "all" view in trend
+
+    const counts: Record<string, number> = {};
+    const labels: string[] = [];
+
+    // 生成日期标签
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split("T")[0];
+      labels.push(dateStr);
+      counts[dateStr] = 0;
+    }
+
+    messages.forEach((msg) => {
+      const dateStr = new Date(msg.createdAt).toISOString().split("T")[0];
+      if (counts[dateStr] !== undefined) {
+        counts[dateStr]++;
+      }
+    });
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Message Volume",
+          data: labels.map((date) => counts[date]),
+          backgroundColor: "rgba(79, 70, 229, 0.2)",
+          borderColor: "#4f46e5",
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+        },
+      ],
+    };
+  });
+
+  // 标签分布数据
+  const tagDistributionData = createMemo(() => {
+    const tagCounts: Record<string, number> = {};
+    filteredMessages().forEach((msg) => {
       msg.tags?.forEach((tag) => {
         tagCounts[tag] = (tagCounts[tag] || 0) + 1;
       });
     });
 
-    // 只显示前5个标签
     const sortedTags = Object.entries(tagCounts)
       .sort(([, a], [, b]) => b - a)
-      .slice(0, 5);
+      .slice(0, 6);
 
     return {
       labels: sortedTags.map(([tag]) => tag),
-      values: sortedTags.map(([, count]) => count),
+      datasets: [
+        {
+          data: sortedTags.map(([, count]) => count),
+          backgroundColor: chartColors.mixed,
+          borderWidth: 0,
+        },
+      ],
     };
   });
 
-  // 按组织统计消息数量
-  const messagesByOrganization = createMemo(() => {
+  // 组织活跃度数据
+  const orgActivityData = createMemo(() => {
     const orgCounts: Record<string, number> = {};
-
-    messagesStore.messages.forEach((msg) => {
+    filteredMessages().forEach((msg) => {
       if (msg.organization) {
-        const orgName = msg.organization.name;
-        orgCounts[orgName] = (orgCounts[orgName] || 0) + 1;
+        orgCounts[msg.organization.name] =
+          (orgCounts[msg.organization.name] || 0) + 1;
+      } else {
+        orgCounts["Personal"] = (orgCounts["Personal"] || 0) + 1;
       }
     });
 
+    const sortedOrgs = Object.entries(orgCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 8);
+
     return {
-      labels: Object.keys(orgCounts),
-      values: Object.values(orgCounts),
+      labels: sortedOrgs.map(([name]) => name),
+      datasets: [
+        {
+          label: "Messages Count",
+          data: sortedOrgs.map(([, count]) => count),
+          backgroundColor: chartColors.primary,
+          borderRadius: 4,
+        },
+      ],
     };
   });
 
-  // 图表配置
-  const lineChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 1500,
-      easing: "easeInOutQuart" as const,
-    },
-    plugins: {
-      legend: {
-        position: "top" as const,
-        labels: {
-          font: {
-            family: "Segoe UI, system-ui, sans-serif",
-            size: 14,
-            weight: "bold" as const,
-          },
-        },
-      },
-      title: {
-        display: true,
-        text: "最近7天消息趋势",
-        font: {
-          family: "Segoe UI, system-ui, sans-serif",
-          size: 18,
-          weight: "bold" as const,
-        },
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          font: {
-            family: "Segoe UI, system-ui, sans-serif",
-            size: 12,
-          },
-        },
-      },
-      y: {
-        ticks: {
-          font: {
-            family: "Segoe UI, system-ui, sans-serif",
-            size: 12,
-          },
-        },
-      },
-    },
-  };
-
-  const doughnutChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      animateScale: true,
-      animateRotate: true,
-      duration: 1500,
-      easing: "easeInOutQuart" as const,
-    },
-    plugins: {
-      legend: {
-        position: "top" as const,
-        labels: {
-          font: {
-            family: "Segoe UI, system-ui, sans-serif",
-            size: 14,
-            weight: "bold" as const,
-          },
-        },
-      },
-      title: {
-        display: true,
-        text: "消息标签分布",
-        font: {
-          family: "Segoe UI, system-ui, sans-serif",
-          size: 18,
-          weight: "bold" as const,
-        },
-      },
-    },
-  };
-
-  const barChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 1500,
-      easing: "easeInOutQuart" as const,
-    },
-    plugins: {
-      legend: {
-        position: "top" as const,
-        labels: {
-          font: {
-            family: "Segoe UI, system-ui, sans-serif",
-            size: 14,
-            weight: "bold" as const,
-          },
-        },
-      },
-      title: {
-        display: true,
-        text: "组织消息分布",
-        font: {
-          family: "Segoe UI, system-ui, sans-serif",
-          size: 18,
-          weight: "bold" as const,
-        },
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          font: {
-            family: "Segoe UI, system-ui, sans-serif",
-            size: 12,
-          },
-        },
-      },
-      y: {
-        ticks: {
-          font: {
-            family: "Segoe UI, system-ui, sans-serif",
-            size: 12,
-          },
-        },
-      },
-    },
-  };
-
-  // 图表数据 - 使用createMemo使其响应式
-  const lineChartData = createMemo(() => ({
-    labels: messagesByDay().labels,
-    datasets: [
-      {
-        label: "消息数量",
-        data: messagesByDay().values,
-      },
-    ],
-  }));
-
-  const doughnutChartData = createMemo(() => ({
-    labels: messagesByTag().labels,
-    datasets: [
-      {
-        data: messagesByTag().values,
-      },
-    ],
-  }));
-
-  const barChartData = createMemo(() => ({
-    labels: messagesByOrganization().labels,
-    datasets: [
-      {
-        label: "消息数量",
-        data: messagesByOrganization().values,
-      },
-    ],
-  }));
-
   return (
     <div class="dashboard-page">
-      <div class="flex justify-between items-center mb-8">
-        <div class="dashboard-header-content">
-          <h1 class="text-3xl font-bold text-gray-800 mb-2">
-            Welcome, {authStore.user?.name}!
-          </h1>
-          <p class="text-gray-600">
-            Here's what's happening with your messages
+      <div class="dashboard-header">
+        <div class="header-content">
+          <h1 class="dashboard-title">Dashboard</h1>
+          <p class="dashboard-subtitle">
+            Overview of your message activities and metrics
           </p>
         </div>
+
+        <div class="time-filter-group">
+          <button
+            class={`filter-btn ${timeRange() === "7d" ? "active" : ""}`}
+            onClick={() => setTimeRange("7d")}
+          >
+            7 Days
+          </button>
+          <button
+            class={`filter-btn ${timeRange() === "30d" ? "active" : ""}`}
+            onClick={() => setTimeRange("30d")}
+          >
+            30 Days
+          </button>
+          <button
+            class={`filter-btn ${timeRange() === "all" ? "active" : ""}`}
+            onClick={() => setTimeRange("all")}
+          >
+            All Time
+          </button>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-500">Total Messages</p>
-              <h3 class="text-3xl font-bold text-gray-800">
-                {messagesStore.messages.length}
-              </h3>
-            </div>
-            <div class="bg-blue-100 p-4 rounded-full transition-all duration-300 hover:bg-blue-200">
-              <span class="text-blue-600 text-2xl">💬</span>
-            </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon-wrapper blue">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{stats().totalMessages}</span>
+            <span class="stat-label">Total Messages</span>
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-500">Today's Messages</p>
-              <h3 class="text-3xl font-bold text-gray-800">
-                {
-                  messagesStore.messages.filter((msg: Message) => {
-                    const today = new Date();
-                    const msgDate = new Date(msg.createdAt);
-                    return msgDate.toDateString() === today.toDateString();
-                  }).length
+        <div class="stat-card">
+          <div class="stat-icon-wrapper green">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{stats().uniqueSenders}</span>
+            <span class="stat-label">Active Senders</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrapper purple">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{stats().uniqueOrgs}</span>
+            <span class="stat-label">Active Organizations</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-section">
+        <div class="chart-card main-chart">
+          <div class="chart-header">
+            <h3>Message Volume Trend</h3>
+          </div>
+          <div class="chart-body">
+            <LineChart
+              data={trendData()}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: false },
+                  tooltip: { mode: "index", intersect: false },
+                },
+                scales: {
+                  y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" } },
+                  x: { grid: { display: false } },
+                },
+              }}
+            />
+          </div>
+        </div>
+
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Top Tags Distribution</h3>
+            </div>
+            <div class="chart-body">
+              <Show
+                when={tagDistributionData().labels.length > 0}
+                fallback={<div class="no-data">No tag data available</div>}
+              >
+                <DonutChart
+                  data={tagDistributionData()}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: {
+                        position: "right",
+                        labels: { usePointStyle: true, padding: 20 },
+                      },
+                    },
+                  }}
+                />
+              </Show>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Messages by Organization</h3>
+            </div>
+            <div class="chart-body">
+              <Show
+                when={orgActivityData().labels.length > 0}
+                fallback={
+                  <div class="no-data">No organization data available</div>
                 }
-              </h3>
-            </div>
-            <div class="bg-green-100 p-4 rounded-full transition-all duration-300 hover:bg-green-200">
-              <span class="text-green-600 text-2xl">📅</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-500">Unique Tags</p>
-              <h3 class="text-3xl font-bold text-gray-800">
-                {
-                  new Set(
-                    messagesStore.messages.flatMap(
-                      (msg: Message) => msg.tags || []
-                    )
-                  ).size
-                }
-              </h3>
-            </div>
-            <div class="bg-purple-100 p-4 rounded-full transition-all duration-300 hover:bg-purple-200">
-              <span class="text-purple-600 text-2xl">🏷️</span>
+              >
+                <BarChart
+                  data={orgActivityData()}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        grid: { color: "rgba(0,0,0,0.05)" },
+                      },
+                      x: { grid: { display: false } },
+                    },
+                  }}
+                />
+              </Show>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 图表部分 */}
-      <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* 折线图 - 最近7天消息趋势 */}
-        <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
-          <div class="h-80">
-            <LineChart data={lineChartData()} />
-          </div>
+      <div class="recent-messages-section">
+        <div class="section-header">
+          <h2>Recent Messages</h2>
         </div>
-
-        {/* 环形图 - 消息标签分布 */}
-        <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
-          <div class="h-80">
-            <DonutChart data={doughnutChartData()} />
-          </div>
-        </div>
-
-        {/* 柱状图 - 组织消息分布 */}
-        <div class="bg-white rounded-xl shadow-lg p-6 lg:col-span-2 transition-all duration-300 hover:shadow-xl">
-          <div class="h-80">
-            <BarChart data={barChartData()} />
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-10">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-gray-800">Recent Messages</h2>
-        </div>
-
-        {messagesStore.isLoading ? (
-          <div class="flex justify-center items-center py-10 bg-white rounded-xl shadow-lg">
-            {messagesStore.isLoading ? "true" : "false"}
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
-        ) : (
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Title
-                  </th>
-                  <th class="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Sender
-                  </th>
-                  <th class="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th class="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Tags
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <For each={messagesStore.messages.slice(0, 5)}>
-                  {(message) => (
-                    <tr class="transition-all duration-300 hover:bg-gray-50 hover:shadow-sm">
-                      <td class="px-8 py-6 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">
-                          {message.title}
+        <div class="table-card">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th width="30%">Title & Description</th>
+                <th width="20%">Organization</th>
+                <th width="15%">Sender</th>
+                <th width="20%">Tags</th>
+                <th width="15%">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <For each={recentMessages()}>
+                {(msg, index) => (
+                  <tr class={selectedIndex() === index() ? "vim-selected" : ""}>
+                    <td>
+                      <div class="cell-content primary">
+                        <div class="msg-title">{msg.title}</div>
+                        <div class="msg-desc">
+                          {msg.short || msg.desp?.slice(0, 50)}
                         </div>
-                        {message.short && (
-                          <div class="text-sm text-gray-500 mt-1">
-                            {message.short}
-                          </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span
+                        class={`org-badge ${
+                          !msg.organization ? "personal" : ""
+                        }`}
+                      >
+                        {msg.organization?.name || "Personal"}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="sender-info">
+                        <div class="sender-avatar">
+                          {msg.sender.name.charAt(0).toUpperCase()}
+                        </div>
+                        <span>{msg.sender.name}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="tags-list">
+                        <For each={msg.tags?.slice(0, 3) || []}>
+                          {(tag) => <span class="tag-badge">{tag}</span>}
+                        </For>
+                        {msg.tags && msg.tags.length > 3 && (
+                          <span class="tag-more">+{msg.tags.length - 3}</span>
                         )}
-                      </td>
-                      <td class="px-8 py-6 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">
-                          {message.sender.name}
-                        </div>
-                      </td>
-                      <td class="px-8 py-6 whitespace-nowrap">
-                        <div class="text-sm text-gray-500">
-                          {new Date(message.createdAt).toLocaleString()}
-                        </div>
-                      </td>
-                      <td class="px-8 py-6 whitespace-nowrap">
-                        <div class="flex space-x-2">
-                          <For each={message.tags || []}>
-                            {(tag) => (
-                              <span class="px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full transition-all duration-300 hover:bg-blue-200">
-                                {tag}
-                              </span>
-                            )}
-                          </For>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </For>
-              </tbody>
-            </table>
-          </div>
-        )}
+                      </div>
+                    </td>
+                    <td class="date-cell">
+                      {new Date(msg.createdAt).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </td>
+                  </tr>
+                )}
+              </For>
+              <Show when={messagesStore.messages.length === 0}>
+                <tr>
+                  <td colspan="5" class="empty-state">
+                    No messages found
+                  </td>
+                </tr>
+              </Show>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

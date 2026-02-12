@@ -1,5 +1,5 @@
-import { createSignal, onMount, onCleanup, JSX } from 'solid-js';
-import './styles.scss';
+import { createSignal, onMount, onCleanup } from "solid-js";
+import "./styles.scss";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -9,7 +9,7 @@ interface ConfirmDialogProps {
   cancelText?: string;
   onConfirm: () => void;
   onCancel: () => void;
-  confirmVariant?: 'primary' | 'danger';
+  confirmVariant?: "primary" | "danger";
 }
 
 export const ConfirmDialog = (props: ConfirmDialogProps) => {
@@ -17,7 +17,7 @@ export const ConfirmDialog = (props: ConfirmDialogProps) => {
 
   // 点击ESC键关闭弹窗
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && props.isOpen) {
+    if (e.key === "Escape" && props.isOpen) {
       props.onCancel();
     }
   };
@@ -31,13 +31,13 @@ export const ConfirmDialog = (props: ConfirmDialogProps) => {
 
   // 生命周期钩子，添加和移除事件监听器
   onMount(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("mousedown", handleClickOutside);
   });
 
   onCleanup(() => {
-    document.removeEventListener('keydown', handleKeyDown);
-    document.removeEventListener('mousedown', handleClickOutside);
+    document.removeEventListener("keydown", handleKeyDown);
+    document.removeEventListener("mousedown", handleClickOutside);
   });
 
   if (!props.isOpen) {
@@ -49,13 +49,18 @@ export const ConfirmDialog = (props: ConfirmDialogProps) => {
       <div class="confirm-dialog" ref={setDialogEl}>
         <div class="confirm-dialog-header">
           <h3 class="confirm-dialog-title">{props.title}</h3>
-          <button 
-            class="confirm-dialog-close" 
+          <button
+            class="confirm-dialog-close"
             onClick={props.onCancel}
             aria-label="Close"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M6 18L18 6M6 6l12 12" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -63,17 +68,19 @@ export const ConfirmDialog = (props: ConfirmDialogProps) => {
           <p class="confirm-dialog-message">{props.message}</p>
         </div>
         <div class="confirm-dialog-footer">
-          <button 
+          <button
             class="confirm-dialog-button confirm-dialog-button--cancel"
             onClick={props.onCancel}
           >
-            {props.cancelText || 'Cancel'}
+            {props.cancelText || "Cancel"}
           </button>
-          <button 
-            class={`confirm-dialog-button confirm-dialog-button--${props.confirmVariant || 'primary'}`}
+          <button
+            class={`confirm-dialog-button confirm-dialog-button--${
+              props.confirmVariant || "primary"
+            }`}
             onClick={props.onConfirm}
           >
-            {props.confirmText || 'Confirm'}
+            {props.confirmText || "Confirm"}
           </button>
         </div>
       </div>

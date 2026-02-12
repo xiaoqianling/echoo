@@ -1,69 +1,119 @@
-/* Sidebar/styles.scss */
-
-/* Import variables */
-@import "@styles/variables.scss";
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
 
 .sidebar {
-  width: 16rem;
-  background-color: $bg-primary;
-  box-shadow: $shadow-md; // 增强阴影效果，提升层次感
-  border-right: 1px solid $border-primary;
-  padding: $spacing-md;
-  height: calc(100vh - 2 * $spacing-md);
+  width: 260px;
+  background-color: #fff; // $background-color
+  border-right: 1px solid #ddd; // $border-color
+  height: calc(100vh - 64px); // Adjust based on header height
+  // Remove sticky positioning as it's now inside a flex container (layout-body)
+  // position: sticky;
+  // top: 64px;
   overflow-y: auto;
-  border-radius: $radius-lg; // 增加圆角，提升柔和感
-  margin: $spacing-sm; // 增加边距，让阴影可见
-  transition: all $transition-normal; // 增加过渡效果，提升交互体验
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out; // @include transition
 
-  // 响应式调整 - 在小屏幕上隐藏侧边栏
-  @media (max-width: 768px) {
-    width: 0;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    // 可以添加侧边栏折叠/展开的过渡效果
+  [data-theme="dark"] & {
+    background-color: #1a1a1a; // $dark-background
+    border-right-color: #444; // $dark-border
   }
 
-  &-nav {
-    nav {
-      ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: $spacing-xs;
+  [data-theme="aemeath"] & {
+    background-color: rgba(255, 220, 228, 0.5); // $aemeath-primary
+    border-right-color: #ffb3c1; // darken($aemeath-primary, 10%)
+  }
+
+  .sidebar-nav {
+    padding: 16px; // $spacing-md
+  }
+
+  .sidebar-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px; // $spacing-xs
+  }
+
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 16px; // $spacing-md
+    padding: 8px 16px; // $spacing-sm $spacing-md
+    border-radius: 4px; // $border-radius
+    color: #777; // $text-color-light
+    font-weight: 500;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out,
+      transform 0.3s ease-in-out; // @include transition
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      color: #4a90e2; // $primary-color
+      transform: translateX(2px);
+    }
+
+    &.active {
+      background-color: rgba(74, 144, 226, 0.1); // $primary-color
+      color: #4a90e2; // $primary-color
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background-color: #4a90e2; // $primary-color
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
       }
     }
-  }
 
-  &-item {
-    a {
-      display: flex;
-      align-items: center;
-      gap: $spacing-sm;
-      padding: $spacing-sm $spacing-md;
-      border-radius: $radius-lg;
-      transition: all $transition-fast;
-      font-weight: 500;
-      color: $text-secondary;
-      text-decoration: none;
-      margin: $spacing-md 0;
+    [data-theme="dark"] & {
+      color: rgba(240, 240, 240, 0.7); // $dark-text
 
       &:hover {
-        background-color: rgba($primary-color, 0.1);
-        color: $primary-color;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #f0f0f0; // $dark-text
       }
 
-      &.active,
-      &:active {
-        background-color: rgba($primary-color, 0.1);
-        color: $primary-color;
+      &.active {
+        background-color: rgba(245, 166, 35, 0.15); // $secondary-color
+        color: #f5a623; // $secondary-color
+
+        &::before {
+          background-color: #f5a623; // $secondary-color
+        }
       }
     }
-  }
 
-  &-icon {
-    font-size: $font-size-xl;
+    [data-theme="aemeath"] & {
+      color: rgba(92, 60, 66, 0.8); // $aemeath-text
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.4);
+        color: #422b2f; // darken($aemeath-text, 10%)
+      }
+
+      &.active {
+        background-color: rgba(255, 255, 255, 0.6);
+        color: #291a1d; // darken($aemeath-text, 20%)
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+        &::before {
+          background-color: #ffb3c1; // $aemeath-secondary
+        }
+      }
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .link-text {
+      font-size: 16px; // $font-size-base
+    }
   }
 }
