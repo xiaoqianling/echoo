@@ -1,0 +1,107 @@
+// d:\program\Projects\entertainment\JS\echoo\client\src\styles\main.scss
+
+@use "./variables-modern" as *;
+@use "./design-system" as *;
+@use "./mixins" as *;
+@use "./loading" as *;
+@use "./themes" as *;
+@use "./charts" as *;
+
+// Reset & Base Styles
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  // Font family is now handled in _design-system.scss
+  font-size: 14px; // Github uses 14px as base
+  line-height: 1.5;
+}
+
+a {
+  // Link styles handled in _design-system.scss
+  transition: color 0.2s ease;
+}
+
+// ... rest of the file ...
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// Global Scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+[data-theme="dark"] {
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+[data-theme="aemeath"] {
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 179, 193, 0.6);
+
+    &:hover {
+      background: rgba(255, 179, 193, 0.8);
+    }
+  }
+
+  body {
+    background-image: radial-gradient(
+        at 10% 10%,
+        rgba(255, 255, 255, 0.5) 0px,
+        transparent 50%
+      ),
+      radial-gradient(at 90% 90%, rgba(255, 255, 255, 0.5) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(255, 220, 228, 0.3) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+// Click Heart Animation
+.click-heart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: floatUpAndFade 1s ease-out forwards;
+}
+
+@keyframes floatUpAndFade {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -100%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -200%) scale(1);
+  }
+}

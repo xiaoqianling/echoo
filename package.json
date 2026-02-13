@@ -1,0 +1,22 @@
+{
+  "name": "echoo-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "start:dev": "pnpm -r --parallel dev",
+    "db:init": "./scripts/init-db.sh",
+    "db:test": "node scripts/test-db.js"
+  },
+  "pnpm": {
+    "overrides": {
+      "swagger-ui-dist": "5.30.3"
+    }
+  },
+  "devDependencies": {
+    "pg": "^8.18.0"
+  },
+  "volta": {
+    "node": "22.19.0"
+  }
+}

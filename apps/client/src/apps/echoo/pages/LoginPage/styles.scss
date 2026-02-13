@@ -1,0 +1,151 @@
+@use "@/styles/mixins" as *;
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--color-canvas-default);
+  padding: var(--base-size-16);
+  transition: background-color 0.2s ease;
+
+  // Aemeath special background is handled via body class in _themes.scss, 
+  // but if .auth-container covers body, we might need transparency or let it be.
+  // Assuming auth-container is the main wrapper.
+  // For Aemeath, we might want to make this transparent or handle it.
+  // But strictly speaking, if we use --color-canvas-default, it will pick up the variable.
+}
+
+.auth-card {
+  background-color: var(--color-canvas-overlay);
+  padding: var(--base-size-32);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 450px;
+  border: 1px solid var(--color-border-default);
+  box-shadow: var(--shadow-large);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-extra-large);
+  }
+
+  .auth-title {
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--color-fg-default);
+    margin-bottom: var(--base-size-24);
+    letter-spacing: -0.5px;
+  }
+
+  .auth-error {
+    background-color: color-mix(in srgb, var(--color-danger-fg), transparent 90%);
+    border: 1px solid color-mix(in srgb, var(--color-danger-fg), transparent 60%);
+    color: var(--color-danger-fg);
+    padding: var(--base-size-16);
+    border-radius: 6px;
+    margin-bottom: var(--base-size-24);
+    font-size: 0.9rem;
+    animation: shake 0.5s ease-in-out;
+  }
+
+  .form-group {
+    margin-bottom: var(--base-size-16);
+
+    .form-label {
+      display: block;
+      color: var(--color-fg-default);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: var(--base-size-8);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--color-border-default);
+      border-radius: 6px;
+      background-color: var(--color-canvas-inset);
+      color: var(--color-fg-default);
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-fg-accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-fg-accent), transparent 85%);
+        background-color: var(--color-canvas-default);
+      }
+    }
+
+    .form-hint {
+      font-size: 0.8rem;
+      color: var(--color-fg-muted);
+      margin-top: var(--base-size-4);
+    }
+  }
+
+  .submit-btn {
+    width: 100%;
+    background-color: var(--color-primary-bg);
+    color: var(--color-primary-fg);
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: var(--base-size-16);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--color-primary-bg), black 10%);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      background-color: var(--color-fg-muted);
+    }
+  }
+
+  .auth-footer {
+    margin-top: var(--base-size-24);
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--color-fg-muted);
+
+    a {
+      color: var(--color-fg-accent);
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
+}

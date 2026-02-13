@@ -1,0 +1,27 @@
+@use "@styles/mixins" as *;
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row; // Sidebar + Main Content
+  background-color: var(--color-canvas-default);
+  transition: background-color 0.2s ease;
+
+  .layout-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100vh;
+    min-width: 0; // Prevent flex item from overflowing
+  }
+
+  .layout-content {
+    flex: 1;
+    padding: var(--base-size-24);
+    display: flex;
+    flex-direction: column;
+    max-width: 1280px; // Limit max width for better readability on large screens
+    margin: 0 auto;
+    width: 100%;
+  }
+}

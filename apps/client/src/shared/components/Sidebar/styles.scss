@@ -1,0 +1,69 @@
+@use "@styles/mixins" as *;
+
+.sidebar {
+  width: 260px;
+  background-color: var(--color-canvas-subtle);
+  border-right: 1px solid var(--color-border-default);
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  .sidebar-nav {
+    padding: var(--base-size-16);
+  }
+
+  .sidebar-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--base-size-4);
+  }
+
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: var(--base-size-16);
+    padding: var(--base-size-8) var(--base-size-16);
+    border-radius: 6px;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background-color: var(--color-canvas-inset);
+      color: var(--color-fg-default);
+      text-decoration: none;
+    }
+
+    &.active {
+      background-color: var(--color-canvas-inset);
+      color: var(--color-fg-default);
+      font-weight: 600;
+      position: relative;
+      
+      // Optional: Add a left border indicator like Github actions or similar
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 20px;
+        width: 3px;
+        background-color: var(--color-fg-accent);
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+      }
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      color: inherit;
+    }
+
+    .link-text {
+      font-size: 14px;
+    }
+  }
+}

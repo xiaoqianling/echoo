@@ -1,0 +1,318 @@
+@use "sass:color";
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.settings-page {
+  padding: 24px; // Replaced $spacing-lg
+  max-width: 800px;
+  margin: 0 auto;
+
+  .settings-page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 32px; // Replaced $spacing-xl
+    color: #333; // Replaced $text-color
+
+    [data-theme="dark"] & {
+      color: #f0f0f0; // Replaced $dark-text
+    }
+  }
+
+  .settings-section {
+    background-color: #fff; // Replaced $background-color
+    border-radius: 8px; // Replaced $border-radius * 2
+    padding: 24px; // Replaced $spacing-lg
+    margin-bottom: 24px; // Replaced $spacing-lg
+    @include box-shadow(1);
+    border: 1px solid #ddd; // Replaced $border-color
+
+    [data-theme="dark"] & {
+      background-color: #262626; // Replaced color.adjust($dark-background, $lightness: 5%)
+      border-color: #444; // Replaced $dark-border
+    }
+
+    [data-theme="aemeath"] & {
+      background-color: rgba(255, 255, 255, 0.8);
+      border-color: rgba(255, 179, 193, 0.3); // Replaced $aemeath-secondary
+    }
+
+    .settings-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px; // Replaced $spacing-lg
+
+      .settings-section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333; // Replaced $text-color
+
+        [data-theme="dark"] & {
+          color: #f0f0f0; // Replaced $dark-text
+        }
+      }
+
+      .settings-edit-btn {
+        padding: 4px 16px; // Replaced $spacing-xs $spacing-md
+        background-color: #4a90e2; // Replaced $primary-color
+        color: white;
+        border-radius: 4px; // Replaced $border-radius
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        @include transition(background-color);
+
+        &:hover {
+          background-color: #357abd; // Replaced color.adjust($primary-color, $lightness: -10%)
+        }
+      }
+    }
+
+    // User Info Styles
+    .user-info-content {
+      .user-info-avatar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 24px; // Replaced $spacing-lg
+
+        .user-info-avatar-placeholder {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background-color: rgba(74, 144, 226, 0.1); // Replaced $primary-color
+          color: #4a90e2; // Replaced $primary-color
+          font-size: 2rem;
+          font-weight: 700;
+          @include flex-center();
+        }
+      }
+
+      .form-group {
+        margin-bottom: 16px; // Replaced $spacing-md
+
+        label {
+          display: block;
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: #777; // Replaced $text-color-light
+          margin-bottom: 4px; // Replaced $spacing-xs
+        }
+
+        .user-info-value {
+          font-size: 1rem;
+          font-weight: 500;
+          color: #333; // Replaced $text-color
+          padding: 8px 0; // Replaced $spacing-sm
+
+          [data-theme="dark"] & {
+            color: #f0f0f0; // Replaced $dark-text
+          }
+        }
+
+        input {
+          width: 100%;
+          padding: 8px; // Replaced $spacing-sm
+          border: 1px solid #ddd; // Replaced $border-color
+          border-radius: 4px; // Replaced $border-radius
+          background-color: #fff; // Replaced $background-color
+          color: #333; // Replaced $text-color
+
+          [data-theme="dark"] & {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-color: #444; // Replaced $dark-border
+            color: #f0f0f0; // Replaced $dark-text
+          }
+
+          &:focus {
+            outline: none;
+            border-color: #4a90e2; // Replaced $primary-color
+          }
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px; // Replaced $spacing-md
+        margin-top: 24px; // Replaced $spacing-lg
+
+        button {
+          padding: 8px 24px; // Replaced $spacing-sm $spacing-lg
+          border-radius: 4px; // Replaced $border-radius
+          cursor: pointer;
+          font-weight: 500;
+          border: none;
+
+          &:first-child {
+            background-color: #ddd; // Replaced $border-color
+            color: #333; // Replaced $text-color
+
+            &:hover {
+              background-color: #c2c2c2; // Replaced color.adjust($border-color, $lightness: -10%)
+            }
+          }
+
+          &:last-child {
+            background-color: #4a90e2; // Replaced $primary-color
+            color: white;
+
+            &:hover {
+              background-color: #357abd; // Replaced color.adjust($primary-color, $lightness: -10%)
+            }
+          }
+        }
+      }
+    }
+
+    // Toggle Settings Styles
+    .settings-options {
+      display: flex;
+      flex-direction: column;
+      gap: 24px; // Replaced $spacing-lg
+
+      .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .setting-item-title {
+          font-weight: 500;
+          color: #333; // Replaced $text-color
+          margin-bottom: 2px;
+
+          [data-theme="dark"] & {
+            color: #f0f0f0; // Replaced $dark-text
+          }
+        }
+
+        .setting-item-description {
+          font-size: 0.85rem;
+          color: #777; // Replaced $text-color-light
+        }
+
+        // Custom Toggle Switch
+        .toggle-switch {
+          position: relative;
+          display: inline-block;
+          width: 44px;
+          height: 24px;
+
+          input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+          }
+
+          .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 24px;
+
+            [data-theme="dark"] & {
+              background-color: #4b5563;
+            }
+
+            &:before {
+              position: absolute;
+              content: "";
+              height: 20px;
+              width: 20px;
+              left: 2px;
+              bottom: 2px;
+              background-color: white;
+              transition: 0.4s;
+              border-radius: 50%;
+            }
+          }
+
+          input:checked + .slider {
+            background-color: #4a90e2; // Replaced $primary-color
+          }
+
+          input:focus + .slider {
+            box-shadow: 0 0 1px #4a90e2; // Replaced $primary-color
+          }
+
+          input:checked + .slider:before {
+            transform: translateX(20px);
+          }
+        }
+      }
+    }
+
+    // Language Settings
+    .language-settings {
+      label {
+        display: block;
+        margin-bottom: 4px; // Replaced $spacing-xs
+        font-weight: 500;
+        color: #777; // Replaced $text-color-light
+      }
+
+      select {
+        width: 100%;
+        padding: 8px; // Replaced $spacing-sm
+        border: 1px solid #ddd; // Replaced $border-color
+        border-radius: 4px; // Replaced $border-radius
+        background-color: #fff; // Replaced $background-color
+        color: #333; // Replaced $text-color
+        cursor: pointer;
+
+        [data-theme="dark"] & {
+          background-color: rgba(0, 0, 0, 0.2);
+          border-color: #444; // Replaced $dark-border
+          color: #f0f0f0; // Replaced $dark-text
+        }
+
+        &:focus {
+          outline: none;
+          border-color: #4a90e2; // Replaced $primary-color
+        }
+      }
+    }
+  }
+
+  .settings-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px; // Replaced $spacing-xl
+
+    button {
+      padding: 16px 32px; // Replaced $spacing-md $spacing-xl
+      border-radius: 4px; // Replaced $border-radius
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      @include transition(background-color, transform);
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+
+      &.logout-btn {
+        background-color: #e74c3c;
+        color: white;
+
+        &:hover {
+          background-color: #c0392b; // Replaced color.adjust(#e74c3c, $lightness: -10%)
+        }
+      }
+
+      &.save-btn {
+        background-color: #4a90e2; // Replaced $primary-color
+        color: white;
+
+        &:hover {
+          background-color: #357abd; // Replaced color.adjust($primary-color, $lightness: -10%)
+        }
+      }
+    }
+  }
+}

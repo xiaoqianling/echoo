@@ -1,0 +1,117 @@
+@use "@styles/mixins" as *;
+
+.header {
+  background-color: var(--color-canvas-default);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-border-muted);
+  padding: var(--base-size-8) var(--base-size-24);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  // Make background slightly transparent to support backdrop-filter
+  // We can use a css variable for this or just rgba
+  background-color: color-mix(in srgb, var(--color-canvas-default), transparent 10%);
+
+  .header-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    width: 260px; // Match sidebar width
+
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--color-fg-default);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: var(--base-size-8);
+      
+      // Use accent color for brand if desired, or default
+      &:hover {
+        color: var(--color-fg-accent);
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--base-size-16);
+  }
+
+  .header-user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--base-size-16);
+  }
+
+  .header-btn {
+    background: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    padding: var(--base-size-4);
+    border-radius: 6px;
+    color: var(--color-fg-muted);
+    position: relative;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: var(--color-canvas-subtle);
+      color: var(--color-fg-default);
+      border-color: var(--color-border-subtle);
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    &.logout-btn {
+      font-size: 14px;
+      font-weight: 500;
+      padding: var(--base-size-4) var(--base-size-8);
+      
+      &:hover {
+        color: var(--color-danger-fg);
+        background-color: var(--color-canvas-subtle);
+        border-color: var(--color-border-subtle);
+      }
+    }
+  }
+
+  .badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background-color: var(--color-danger-fg); // Github uses danger color for notifications often
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 4px;
+    border: 2px solid var(--color-canvas-default); // Ring effect
+  }
+
+  .username {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-fg-default);
+  }
+}

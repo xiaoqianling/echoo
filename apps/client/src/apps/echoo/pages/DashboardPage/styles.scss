@@ -1,0 +1,369 @@
+@use "@/styles/mixins" as *;
+
+.dashboard-page {
+  padding: var(--base-size-32);
+  max-width: 1600px;
+  margin: 0 auto;
+  font-family: var(--font-stack-system);
+  color: var(--color-fg-default);
+
+  // Header Section
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: var(--base-size-40);
+
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--color-fg-default);
+      margin-bottom: var(--base-size-8);
+      letter-spacing: -0.02em;
+    }
+
+    .dashboard-subtitle {
+      color: var(--color-fg-muted);
+      font-size: 1rem;
+    }
+
+    .time-filter-group {
+      display: flex;
+      background: var(--color-canvas-inset);
+      padding: 4px;
+      border-radius: 8px;
+      gap: 4px;
+      border: 1px solid var(--color-border-muted);
+
+      .filter-btn {
+        padding: 6px 16px;
+        border: none;
+        background: transparent;
+        color: var(--color-fg-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          color: var(--color-fg-default);
+          background: var(--color-canvas-subtle);
+        }
+
+        &.active {
+          background: var(--color-canvas-default);
+          color: var(--color-fg-accent);
+          box-shadow: var(--shadow-small);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  // Stats Grid
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--base-size-24);
+    margin-bottom: var(--base-size-40);
+  }
+
+  .stat-card {
+    background: var(--color-canvas-default);
+    border-radius: 12px;
+    padding: var(--base-size-24);
+    display: flex;
+    align-items: center;
+    gap: var(--base-size-24);
+    border: 1px solid var(--color-border-muted);
+    box-shadow: var(--shadow-small);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+      border-color: var(--color-border-default);
+    }
+
+    .stat-icon-wrapper {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      // We might want to use specific CSS variables for these distinct colors
+      // For now, I'll keep them somewhat hardcoded or map to primary/accent if possible,
+      // but stats usually need distinct colors.
+      // Let's use opacity mix with accent colors or define new utility variables if strictly needed.
+      // For simplicity in this refactor, I'll use hardcoded colors but adapted for dark mode via transparency.
+      
+      background: var(--color-canvas-inset);
+      color: var(--color-fg-default);
+
+      &.blue {
+        background: color-mix(in srgb, #3b82f6, transparent 85%);
+        color: #3b82f6;
+      }
+      &.green {
+        background: color-mix(in srgb, #10b981, transparent 85%);
+        color: #10b981;
+      }
+      &.purple {
+        background: color-mix(in srgb, #8b5cf6, transparent 85%);
+        color: #8b5cf6;
+      }
+
+      svg {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--color-fg-default);
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--color-fg-muted);
+      margin-top: 4px;
+    }
+  }
+
+  // Charts Section
+  .charts-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--base-size-24);
+    margin-bottom: var(--base-size-40);
+  }
+
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--base-size-24);
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .chart-card {
+    background: var(--color-canvas-default);
+    border-radius: 12px;
+    padding: var(--base-size-24);
+    box-shadow: var(--shadow-small);
+    border: 1px solid var(--color-border-muted);
+
+    &.main-chart {
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-header {
+      margin-bottom: var(--base-size-24);
+      h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--color-fg-default);
+      }
+    }
+
+    .chart-body {
+      flex: 1;
+      position: relative;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .no-data {
+      color: var(--color-fg-muted);
+      font-size: 0.95rem;
+    }
+  }
+
+  // Recent Messages Table
+  .recent-messages-section {
+    .section-header {
+      margin-bottom: var(--base-size-24);
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--color-fg-default);
+      }
+    }
+  }
+
+  .table-card {
+    background: var(--color-canvas-default);
+    border-radius: 12px;
+    box-shadow: var(--shadow-small);
+    overflow: hidden;
+    border: 1px solid var(--color-border-muted);
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+
+    thead {
+      background-color: var(--color-canvas-subtle);
+      border-bottom: 1px solid var(--color-border-muted);
+
+      th {
+        padding: 16px 24px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--color-fg-muted);
+        letter-spacing: 0.05em;
+      }
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--color-border-muted);
+      transition: background-color 0.15s ease;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background-color: var(--color-canvas-subtle);
+      }
+
+      &.vim-selected {
+        background-color: var(--color-canvas-subtle);
+        position: relative;
+
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 3px;
+          background-color: var(--color-fg-accent);
+          border-top-right-radius: 2px;
+          border-bottom-right-radius: 2px;
+        }
+      }
+    }
+
+    td {
+      padding: 16px 24px;
+      vertical-align: middle;
+    }
+
+    .cell-content.primary {
+      .msg-title {
+        font-weight: 600;
+        color: var(--color-fg-default);
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+      }
+      .msg-desc {
+        color: var(--color-fg-muted);
+        font-size: 0.85rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 300px;
+      }
+    }
+
+    .org-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background-color: color-mix(in srgb, var(--color-fg-accent), transparent 85%);
+      color: var(--color-fg-accent);
+
+      &.personal {
+        background-color: var(--color-canvas-inset);
+        color: var(--color-fg-muted);
+      }
+    }
+
+    .sender-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--color-fg-default);
+      font-weight: 500;
+
+      .sender-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6); // Keep gradient for now
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+    }
+
+    .tags-list {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+
+      .tag-badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        background-color: color-mix(in srgb, #10b981, transparent 85%);
+        color: #059669;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border: 1px solid color-mix(in srgb, #10b981, transparent 80%);
+        transition: transform 0.2s;
+
+        &:hover {
+          transform: translateY(-1px);
+        }
+      }
+
+      .tag-more {
+        font-size: 0.75rem;
+        color: var(--color-fg-muted);
+        padding: 2px 4px;
+      }
+    }
+
+    .date-cell {
+      color: var(--color-fg-muted);
+      font-size: 0.85rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px;
+      color: var(--color-fg-muted);
+      font-size: 1rem;
+    }
+  }
+}

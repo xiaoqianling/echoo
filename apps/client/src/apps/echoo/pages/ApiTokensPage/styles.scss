@@ -1,0 +1,198 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.api-tokens-page {
+  padding: $spacing-xl;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xl;
+
+    h1 {
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .generate-btn {
+      @include button-primary;
+    }
+  }
+
+  .tokens-list {
+    background-color: var(--bg-primary);
+    border-radius: $radius-lg;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th,
+      td {
+        padding: $spacing-md;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      th {
+        background-color: var(--bg-secondary);
+        color: var(--text-secondary);
+        font-weight: $font-weight-semibold;
+        font-size: $font-size-sm;
+      }
+
+      td {
+        color: var(--text-primary);
+        font-size: $font-size-sm;
+      }
+
+      .token-prefix {
+        font-family: monospace;
+        background-color: var(--bg-secondary);
+        padding: 2px 6px;
+        border-radius: $radius-sm;
+      }
+
+      .delete-btn {
+        background: none;
+        border: none;
+        color: var(--error-color);
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: $radius-sm;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: rgba(var(--error-color-rgb), 0.1);
+        }
+      }
+    }
+
+    .empty-state {
+      padding: $spacing-2xl;
+      text-align: center;
+      color: var(--text-tertiary);
+    }
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--bg-primary);
+  padding: $spacing-xl;
+  border-radius: $radius-lg;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: $shadow-lg;
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: $spacing-md;
+    color: var(--text-primary);
+  }
+
+  .form-group {
+    margin-bottom: $spacing-lg;
+
+    label {
+      display: block;
+      margin-bottom: $spacing-sm;
+      color: var(--text-secondary);
+    }
+
+    input {
+      width: 100%;
+      padding: $spacing-sm;
+      border: 1px solid var(--border-color);
+      border-radius: $radius-md;
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-md;
+
+    button {
+      padding: $spacing-sm $spacing-md;
+      border-radius: $radius-md;
+      cursor: pointer;
+      font-weight: $font-weight-medium;
+    }
+
+    .cancel-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+
+      &:hover {
+        background-color: var(--bg-secondary);
+      }
+    }
+
+    .confirm-btn {
+      @include button-primary;
+    }
+  }
+
+  .token-display {
+    background-color: var(--bg-secondary);
+    padding: $spacing-md;
+    border-radius: $radius-md;
+    border: 1px solid var(--border-color);
+    margin-bottom: $spacing-lg;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    code {
+      font-family: monospace;
+      color: var(--primary-color);
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .warning-text {
+    color: var(--warning-color);
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-md;
+  }
+}

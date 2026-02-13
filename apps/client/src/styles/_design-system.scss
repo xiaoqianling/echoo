@@ -1,0 +1,107 @@
+:root {
+  /* Scale */
+  --base-size-4: 4px;
+  --base-size-8: 8px;
+  --base-size-16: 16px;
+  --base-size-24: 24px;
+  --base-size-32: 32px;
+  --base-size-40: 40px;
+  --base-size-48: 48px;
+  --base-size-64: 64px;
+
+  /* Typography */
+  --font-stack-system: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-stack-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  
+  /* Light Theme (Default) */
+  --color-fg-default: #24292f;
+  --color-fg-muted: #57606a;
+  --color-fg-subtle: #6e7781;
+  --color-fg-accent: #0969da;
+  
+  --color-canvas-default: #ffffff;
+  --color-canvas-overlay: #ffffff;
+  --color-canvas-inset: #f6f8fa;
+  --color-canvas-subtle: #f6f8fa;
+  
+  --color-border-default: #d0d7de;
+  --color-border-muted: #d8dee4;
+  --color-border-subtle: #1b1f2426;
+  
+  --color-primary-bg: #0969da;
+  --color-primary-fg: #ffffff;
+  
+  --color-danger-fg: #cf222e;
+  
+  --shadow-small: 0 1px 0 rgba(27,31,36,0.04);
+  --shadow-medium: 0 3px 6px rgba(140,149,159,0.15);
+  --shadow-large: 0 8px 24px rgba(140,149,159,0.2);
+  --shadow-extra-large: 0 12px 28px rgba(140,149,159,0.3);
+}
+
+[data-theme="dark"] {
+  --color-fg-default: #c9d1d9;
+  --color-fg-muted: #8b949e;
+  --color-fg-subtle: #484f58;
+  --color-fg-accent: #58a6ff;
+  
+  --color-canvas-default: #0d1117;
+  --color-canvas-overlay: #161b22;
+  --color-canvas-inset: #010409;
+  --color-canvas-subtle: #161b22;
+  
+  --color-border-default: #30363d;
+  --color-border-muted: #21262d;
+  --color-border-subtle: #f0f6fc1a;
+  
+  --color-primary-bg: #1f6feb;
+  --color-primary-fg: #ffffff;
+  
+  --color-danger-fg: #f85149;
+  
+  --shadow-small: 0 0 transparent;
+  --shadow-medium: 0 3px 6px #010409;
+  --shadow-large: 0 8px 24px #010409;
+  --shadow-extra-large: 0 12px 28px #010409;
+}
+
+[data-theme="aemeath"] {
+  --color-fg-default: #5c3c42;
+  --color-fg-muted: #8c5e69;
+  --color-fg-subtle: #bfaeb3;
+  --color-fg-accent: #d63384;
+  
+  --color-canvas-default: #fff0f5; /* Lavender Blush */
+  --color-canvas-overlay: #fff5f8;
+  --color-canvas-inset: #ffe6eb;
+  --color-canvas-subtle: #fff5f8;
+  
+  --color-border-default: #ffb3c1;
+  --color-border-muted: #ffdce4;
+  --color-border-subtle: #ffb3c180;
+  
+  --color-primary-bg: #ff8fa3;
+  --color-primary-fg: #ffffff;
+  
+  --color-danger-fg: #d6336c;
+  
+  --shadow-small: 0 1px 2px rgba(255, 179, 193, 0.3);
+  --shadow-medium: 0 4px 12px rgba(255, 179, 193, 0.4);
+  --shadow-large: 0 8px 24px rgba(255, 179, 193, 0.5);
+  --shadow-extra-large: 0 12px 32px rgba(255, 179, 193, 0.6);
+}
+
+body {
+  background-color: var(--color-canvas-default);
+  color: var(--color-fg-default);
+  font-family: var(--font-stack-system);
+}
+
+a {
+  color: var(--color-fg-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

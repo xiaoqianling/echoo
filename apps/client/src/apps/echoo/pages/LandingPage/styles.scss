@@ -1,0 +1,284 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.landing-page {
+  height: 100vh;
+  width: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  background: transparent; // Uses the Aemeath background
+  color: #1f2937;
+  font-family: "Inter", sans-serif;
+
+  .scroll-section {
+    height: 100vh;
+    width: 100%;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+    &.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .content-wrapper {
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 24px;
+    text-align: center;
+    z-index: 2;
+  }
+
+  // Typography & Common
+  .section-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 48px;
+    color: #111827;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+
+    &.btn-primary {
+      background: #4f46e5;
+      color: white;
+      box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+
+      &:hover {
+        background: #4338ca;
+        transform: translateY(-2px);
+      }
+    }
+
+    &.btn-outline {
+      border: 2px solid #4f46e5;
+      color: #4f46e5;
+      background: transparent;
+
+      &:hover {
+        background: rgba(79, 70, 229, 0.05);
+      }
+    }
+
+    &.btn-large {
+      padding: 16px 48px;
+      font-size: 1.25rem;
+    }
+  }
+
+  // Section 1: Hero
+  .hero-section {
+    .hero-title {
+      font-size: 4rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      color: #111827;
+
+      .gradient-text {
+        background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      color: #4b5563;
+      max-width: 600px;
+      margin: 0 auto 48px;
+      line-height: 1.5;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: #6b7280;
+      animation: bounce 2s infinite;
+
+      span {
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .arrow {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  // Section 2: Features
+  .value-section {
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: transform 0.3s;
+
+      &:hover {
+        transform: translateY(-10px);
+      }
+
+      .icon {
+        font-size: 3rem;
+        margin-bottom: 24px;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: #111827;
+      }
+
+      p {
+        color: #6b7280;
+        line-height: 1.6;
+      }
+    }
+  }
+
+  // Section 3: Stats
+  .stats-section {
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 48px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .stat-number {
+        font-size: 5rem;
+        font-weight: 900;
+        color: #4f46e5;
+        line-height: 1;
+        margin-bottom: 16px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .stat-label {
+        font-size: 1.5rem;
+        color: #4b5563;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Section 4: CTA
+  .cta-section {
+    .cta-text {
+      font-size: 1.5rem;
+      color: #4b5563;
+      margin-bottom: 48px;
+    }
+
+    .landing-footer {
+      position: absolute;
+      bottom: 24px;
+      width: 100%;
+      text-align: center;
+      color: #9ca3af;
+    }
+  }
+
+  // Animations
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    40% {
+      transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+      transform: translateX(-50%) translateY(-5px);
+    }
+  }
+
+  // Dark Mode
+  [data-theme="dark"] & {
+    color: #f3f4f6;
+
+    .section-title {
+      color: #f9fafb;
+    }
+
+    .hero-section {
+      .hero-title {
+        color: #f9fafb;
+      }
+      .hero-subtitle {
+        color: #9ca3af;
+      }
+    }
+
+    .feature-card {
+      background: rgba(31, 41, 55, 0.7);
+      border-color: rgba(255, 255, 255, 0.1);
+
+      h3 {
+        color: #f9fafb;
+      }
+      p {
+        color: #9ca3af;
+      }
+    }
+
+    .stat-item {
+      .stat-number {
+        color: #818cf8;
+      }
+      .stat-label {
+        color: #9ca3af;
+      }
+    }
+
+    .cta-text {
+      color: #9ca3af;
+    }
+  }
+}

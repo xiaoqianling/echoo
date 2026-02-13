@@ -1,0 +1,126 @@
+@use "../../../styles/variables-modern" as ds;
+
+.notification-popover {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: ds.$spacing-sm;
+  width: 360px;
+  background-color: var(--color-canvas-overlay);
+  border: 1px solid var(--color-border-default);
+  border-radius: ds.$radius-lg;
+  box-shadow: ds.$shadow-lg;
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideIn 0.2s ease-out;
+
+  .popover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: ds.$spacing-md;
+    border-bottom: 1px solid var(--color-border-default);
+
+    h3 {
+      margin: 0;
+      font-size: ds.$font-size-base;
+      font-weight: 600;
+      color: var(--color-fg-default);
+    }
+
+    .mark-read-btn {
+      background: none;
+      border: none;
+      color: var(--color-fg-accent);
+      font-size: ds.$font-size-sm;
+      cursor: pointer;
+      padding: 0;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .notification-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .notification-item {
+    padding: ds.$spacing-md;
+    border-bottom: 1px solid var(--color-border-default);
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    gap: ds.$spacing-sm;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: var(--color-canvas-subtle);
+    }
+
+    &.unread {
+      background-color: var(--color-canvas-inset);
+      
+      .notification-dot {
+        opacity: 1;
+      }
+    }
+
+    .notification-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--color-fg-accent);
+      border-radius: 50%;
+      margin-top: 6px;
+      opacity: 0;
+    }
+
+    .notification-content {
+      flex: 1;
+
+      .notification-text {
+        font-size: ds.$font-size-sm;
+        color: var(--color-fg-default);
+        margin-bottom: ds.$spacing-xs;
+        
+        strong {
+          display: block;
+          margin-bottom: 2px;
+        }
+        
+        p {
+          margin: 0;
+          color: var(--color-fg-muted);
+        }
+      }
+
+      .notification-time {
+        font-size: ds.$font-size-xs;
+        color: var(--color-fg-subtle);
+      }
+    }
+  }
+
+  .empty-state {
+    padding: ds.$spacing-xl;
+    text-align: center;
+    color: var(--color-fg-subtle);
+    font-size: ds.$font-size-sm;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,60 @@
+@use "@styles/variables" as *;
+@use "@styles/mixins" as *;
+
+.auth-guard-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  @include flex-center();
+  background-color: #fff; // Replaced $background-color
+  z-index: 9999;
+
+  [data-theme="dark"] & {
+    background-color: #1a1a1a; // Replaced $dark-background
+  }
+
+  [data-theme="aemeath"] & {
+    background-color: #ffdce4; // Replaced $aemeath-primary
+  }
+
+  &-container {
+    text-align: center;
+
+    &-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(74, 144, 226, 0.3); // Replaced $primary-color
+      border-radius: 50%;
+      border-top-color: #4a90e2; // Replaced $primary-color
+      animation: spin 1s ease-in-out infinite;
+      margin: 0 auto 16px; // Replaced $spacing-md
+
+      [data-theme="aemeath"] & {
+        border-color: rgba(255, 179, 193, 0.3); // Replaced $aemeath-secondary
+        border-top-color: #ffb3c1; // Replaced $aemeath-secondary
+      }
+    }
+
+    &-text {
+      color: #777; // Replaced $text-color-light
+      font-size: 1rem;
+      font-weight: 500;
+
+      [data-theme="dark"] & {
+        color: #f0f0f0; // Replaced $dark-text
+      }
+
+      [data-theme="aemeath"] & {
+        color: #5c3c42; // Replaced $aemeath-text
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
